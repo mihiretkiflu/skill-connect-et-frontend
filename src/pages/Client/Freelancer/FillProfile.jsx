@@ -1,13 +1,11 @@
 import { CheckCircleOutlineOutlined } from "@mui/icons-material";
 import { Box, Button, Divider } from "@mui/material";
-import React, { useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import CustomCard from "../../../components/CustomCard";
 import { CustomTextField } from "../../../components/CustomTextField";
 
-export default function PostProject() {
-  const [apply, setApply] = useState(false);
-
+export default function CreateProfile() {
   const {
     control,
     handleSubmit,
@@ -31,7 +29,7 @@ export default function PostProject() {
               }}
             >
               <CustomCard
-                title={"Post a Project"}
+                title={"Create Your Profile"}
                 customStyle={{
                   "&:hover": {
                     background: "grey",
@@ -39,7 +37,7 @@ export default function PostProject() {
                 }}
               >
                 <div className=" mt-2">
-                  <Divider />{" "}
+                  <Divider />
                 </div>
 
                 <div className="mt-4">
@@ -51,8 +49,15 @@ export default function PostProject() {
                       lf={4}
                       tf={8}
                       control={control}
-                      name={"headline"}
-                      label={"Headline"}
+                      name={"Profile Picture"}
+                      label={"Profile Picture"}
+                    />
+                    <CustomTextField
+                      lf={4}
+                      tf={8}
+                      control={control}
+                      name={"Full Name"}
+                      label={"Full Name"}
                     />
                     <CustomTextField
                       lf={4}
@@ -72,31 +77,51 @@ export default function PostProject() {
                       lf={4}
                       tf={8}
                       control={control}
-                      name={"skills"}
-                      label={"Skills"}
+                      name={"Location"}
+                      label={"Location"}
                     />
                     <CustomTextField
                       lf={4}
                       tf={8}
                       control={control}
-                      name={"Scope"}
-                      label={"Scope"}
-                      options={["Large", "Medium", "Small"]}
+                      name={"Title"}
+                      label={"Title"}
                     />
                     <CustomTextField
                       lf={4}
                       tf={8}
                       control={control}
-                      name={"duration"}
-                      label={"Project Duration"}
+                      name={"Description"}
+                      label={"Description"}
+                      rows={8}
+                    />
+                    <CustomTextField
+                      lf={4}
+                      tf={8}
+                      control={control}
+                      name={"Skill"}
+                      label={"Skill"}
+                    />
+                    <CustomTextField
+                      lf={4}
+                      tf={8}
+                      control={control}
+                      name={"Language"}
+                      label={"Language"}
+                    />
+                    <CustomTextField
+                      lf={4}
+                      tf={8}
+                      control={control}
+                      name={"Education"}
+                      label={"Education"}
                     />{" "}
                     <CustomTextField
                       lf={4}
                       tf={8}
                       control={control}
-                      name={"Project Time"}
-                      label={"Project Time"}
-                      options={["1 Month", "3 Month", "6 Month"]}
+                      name={"Portfolio Link"}
+                      label={"Portfolio Link"}
                     />
                     <CustomTextField
                       lf={4}
@@ -117,30 +142,8 @@ export default function PostProject() {
                       lf={4}
                       tf={8}
                       control={control}
-                      name={"Title"}
-                      label={"Title"}
-                    />
-                    <CustomTextField
-                      lf={4}
-                      tf={8}
-                      control={control}
-                      name={"Link"}
-                      label={"Link"}
-                    />
-                    <CustomTextField
-                      lf={4}
-                      tf={8}
-                      control={control}
                       name={"Attachment"}
                       label={"Attachment"}
-                    />
-                    <CustomTextField
-                      lf={4}
-                      tf={8}
-                      control={control}
-                      name={"description"}
-                      label={"Description"}
-                      rows={8}
                     />
                   </form>
                 </div>
@@ -158,7 +161,28 @@ export default function PostProject() {
               </CustomCard>
             </Box>
           </div>
-          <div className="col-lg-4">{/* <RightSideView /> */}</div>
+          <div className="col-lg-4">
+            <CustomCard
+              title={"Upload Your Profile Picture"}
+              customStyle={{
+                "&:hover": {
+                  background: "grey",
+                },
+              }}
+            >
+              <Box
+                sx={{
+                  height: "8rem",
+                  width: "8rem",
+                  border: 2,
+                  borderStyle: "dashed",
+                  borderColor: "gray",
+                  borderRadius: ".5rem",
+                  cursor: "pointer",
+                }}
+              ></Box>
+            </CustomCard>
+          </div>
         </div>
       </div>
     </div>

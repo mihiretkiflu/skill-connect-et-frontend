@@ -31,6 +31,10 @@ export default function HomeNavbar() {
       label: "Sign Up",
       link: "/sign-up",
     },
+    {
+      label: "Create Profile",
+      link: "/create-profile",
+    },
   ];
 
   return (

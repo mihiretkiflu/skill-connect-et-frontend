@@ -1,33 +1,39 @@
+import { MenuItem, TextField } from "@mui/material";
 import React from "react";
 
-export function CustomTextField({ label, control, name, lf, tf }) {
+export function CustomTextField({
+  label,
+  control,
+  name,
+  options,
+  select,
+  lf,
+  tf,
+  rows,
+  multiline,
+  ...props
+}) {
   return (
-    <div class="d-flex mt-2">
-      <label style={{ flex: lf || 5 }} for={name} class="form-label">
+    <div class="d-flex mt-3">
+      {/* <label style={{ flex: lf || 5 }} for={name} class="form-label">
         {label}
-      </label>
-      <div style={{ flex: tf || 7 }} class="input-group">
-        <input type="text" name="username" class="form-control" id={name} />
-        <div class="invalid-feedback">Please enter your username.</div>
-      </div>
-    </div>
-  );
-}
-export function CustomTextAread({ label, control, name, lf, tf, rows }) {
-  return (
-    <div class="d-flex mt-2">
-      <label style={{ flex: lf || 5 }} for={name} class="form-label">
-        {label}
-      </label>
-      <div style={{ flex: tf || 7 }} class="input-group">
-        <textarea
-          type="text"
-          name="username"
-          class="form-control"
-          id={name}
-          rows={rows||5}
-        ></textarea>
-        <div class="invalid-feedback">Please enter your username.</div>
+      </label> */}
+      <div style={{ flex: 12 || tf || 7 }} class="input-group">
+        <TextField
+          {...props}
+          label={label}
+          variant="outlined"
+          fullWidth
+          select={select || options}
+          multiline={multiline || rows}
+          rows={rows}
+        >
+          {options?.map((option) => (
+            <MenuItem key={option || option?.value}>
+              {option || option?.label}
+            </MenuItem>
+          ))}
+        </TextField>
       </div>
     </div>
   );

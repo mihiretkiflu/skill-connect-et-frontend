@@ -2,10 +2,7 @@ import { Box, Button, Chip, Divider } from "@mui/material";
 import React, { useState } from "react";
 import CustomCard from "../../../components/CustomCard";
 import RightSideView from "./RightSideView";
-import {
-  CustomTextAread,
-  CustomTextField,
-} from "../../../components/CustomTextField";
+import { CustomTextField } from "../../../components/CustomTextField";
 import { useForm } from "react-hook-form";
 import { CheckCircleOutlineOutlined } from "@mui/icons-material";
 
@@ -127,7 +124,7 @@ export default function WorkDetail() {
                         name={"duration"}
                         label={"Project Duration"}
                       />
-                      <CustomTextAread
+                      <CustomTextField
                         lf={4}
                         tf={8}
                         control={control}
