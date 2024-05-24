@@ -1,16 +1,54 @@
+import { useMutation } from "@apollo/client";
+import { yupResolver } from "@hookform/resolvers/yup";
 import React from "react";
-import { Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import * as Yup from "yup";
+import { CustomTextField } from "../../components/CustomTextField";
+import { CREATE_USER } from "../../graphql/user";
 
 export default function SignUp() {
+  const navigate = useNavigate();
+
+  const [createUser, { loading }] = useMutation(CREATE_USER);
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    mode: "all",
+    resolver: validator,
+    defaultValues: {},
+  });
+
+  const onSubmit = async (values) => {
+    delete values.confirm_password;
+
+    try {
+      await createUser({ variables: { input: values } });
+
+      navigate("/login");
+
+      toast.success("User Successfully Added!", { autoClose: 500 });
+    } catch (error) {
+      toast.error(error.message, {
+        autoClose: 500,
+      });
+    }
+  };
+
   return (
     <div class="container">
-      <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
+      <section class="section register d-flex flex-column align-items-center justify-content-center">
         <div class="container">
           <div class="row justify-content-center">
             <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
-              <div class="card mb-3 mt-5">
+              <div class="card mb-0">
                 <div class="card-body">
-                  <div class="pt-4 pb-2">
+                  <div class="pt-0 pb-2">
                     <h5 class="card-title text-center pb-0 fs-4">
                       Create an Account
                     </h5>
@@ -19,92 +57,56 @@ export default function SignUp() {
                     </p>
                   </div>
 
-                  <form class="row g-3 needs-validation" novalidate>
-                    <div class="col-12">
-                      <label for="yourName" class="form-label">
-                        Your Name
-                      </label>
-                      <input
-                        type="text"
-                        name="name"
-                        class="form-control"
-                        id="yourName"
-                        required
-                      />
-                      <div class="invalid-feedback">
-                        Please, enter your name!
-                      </div>
-                    </div>
+                  <form
+                    class="row g-3 needs-validation"
+                    onSubmit={handleSubmit(onSubmit)}
+                  >
+                    <CustomTextField
+                      size={"small"}
+                      control={control}
+                      name={"firstname"}
+                      label={"First Name"}
+                    />
+                    <CustomTextField
+                      size={"small"}
+                      control={control}
+                      name={"lastname"}
+                      label={"Last Name"}
+                    />
+                    <CustomTextField
+                      size={"small"}
+                      control={control}
+                      name={"email"}
+                      label={"Email"}
+                    />
+                    <CustomTextField
+                      size={"small"}
+                      control={control}
+                      name={"role"}
+                      label={"Role"}
+                      options={["freelance", "employer"]}
+                    />
+                    <CustomTextField
+                      size={"small"}
+                      control={control}
+                      name={"password"}
+                      label={"Password"}
+                      type={"password"}
+                    />
+                    {/* <CustomTextField
+                      size={"small"}
+                      control={control}
+                      name={"confirm_password"}
+                      label={"Confirm Password"}
+                      type={"password"}
+                    /> */}
 
                     <div class="col-12">
-                      <label for="yourEmail" class="form-label">
-                        Your Email
-                      </label>
-                      <input
-                        type="email"
-                        name="email"
-                        class="form-control"
-                        id="yourEmail"
-                        required
-                      />
-                      <div class="invalid-feedback">
-                        Please enter a valid Email adddress!
-                      </div>
-                    </div>
-
-                    <div class="col-12">
-                      <label for="yourPassword" class="form-label">
-                        Confirm Password
-                      </label>
-                      <input
-                        type="password"
-                        name="password"
-                        class="form-control"
-                        id="yourPassword"
-                        required
-                      />
-                      <div class="invalid-feedback">
-                        Please enter your password!
-                      </div>
-                    </div>
-                    <div class="col-12">
-                      <label for="yourPassword" class="form-label">
-                        Password
-                      </label>
-                      <input
-                        type="password"
-                        name="password"
-                        class="form-control"
-                        id="yourPassword"
-                        required
-                      />
-                      <div class="invalid-feedback">
-                        Please enter your password!
-                      </div>
-                    </div>
-
-                    {/* <div class="col-12">
-                      <div class="form-check">
-                        <input
-                          class="form-check-input"
-                          name="terms"
-                          type="checkbox"
-                          value=""
-                          id="acceptTerms"
-                          required
-                        />
-                        <label class="form-check-label" for="acceptTerms">
-                          I agree and accept the
-                          <a href="#">terms and conditions</a>
-                        </label>
-                        <div class="invalid-feedback">
-                          You must agree before submitting.
-                        </div>
-                      </div>
-                    </div> */}
-                    <div class="col-12">
-                      <button class="btn btn-primary w-100" type="submit">
-                        Create Account
+                      <button
+                        class="btn btn-primary w-100"
+                        type={loading ? "button" : "submit"}
+                      >
+                        {loading ? "Loading..." : "Create Account"}
                       </button>
                     </div>
                     <div class="col-12">
@@ -123,3 +125,24 @@ export default function SignUp() {
     </div>
   );
 }
+
+const validator = yupResolver(
+  Yup.object().shape({
+    firstname: Yup.string().required(),
+    lastname: Yup.string().required(),
+    email: Yup.string().required(),
+    role: Yup.string().required(),
+    password: Yup.string().required("Required"),
+  })
+);
+
+export const roles = [
+  {
+    label: "Freelancer",
+    value: "freelance",
+  },
+  {
+    label: "Client",
+    value: "employer",
+  },
+];

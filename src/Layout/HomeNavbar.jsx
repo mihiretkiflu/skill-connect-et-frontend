@@ -1,7 +1,10 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
 
 export default function HomeNavbar() {
+  const { currentUser } = useSelector((state) => state.auth);
+
   const navbars = [
     {
       label: "Home",
@@ -18,22 +21,32 @@ export default function HomeNavbar() {
     {
       label: "My Projects",
       link: "/my-projects",
+      hide: currentUser?.role !== "freelance",
     },
     {
       label: "My Contracts",
       link: "/my-contracts",
+      hide: currentUser?.role !== "freelance",
     },
     {
       label: "Login",
       link: "/login",
+      hide: currentUser?.role,
     },
     {
       label: "Sign Up",
       link: "/sign-up",
+      hide: currentUser?.role,
     },
     {
       label: "Create Profile",
       link: "/create-profile",
+      hide: currentUser?.role !== "freelance",
+    },
+    {
+      label: "My Profile",
+      link: "/my-profile",
+      hide: !currentUser?.role,
     },
   ];
 
@@ -42,28 +55,33 @@ export default function HomeNavbar() {
       <div className="container d-flex align-items-center justify-content-between">
         <nav id="navbar" className="navbar">
           <ul>
-            {navbars.map((navbar) => (
+            {navbars.map(
+              (navbar) =>
+                !navbar?.hide && (
+                  <li>
+                    <NavLink
+                      className={({ isActive, isPending }) =>
+                        isPending
+                          ? "nav-link pending"
+                          : isActive
+                          ? "nav-link active"
+                          : "nav-link"
+                      }
+                      to={navbar.link}
+                    >
+                      {navbar.label}
+                    </NavLink>
+                  </li>
+                )
+            )}
+
+            {currentUser?.role === "employer" && (
               <li>
-                <NavLink
-                  className={({ isActive, isPending }) =>
-                    isPending
-                      ? "nav-link pending"
-                      : isActive
-                      ? "nav-link active"
-                      : "nav-link"
-                  }
-                  to={navbar.link}
-                >
-                  {navbar.label}
+                <NavLink className="getstarted" to="/post-project">
+                  Post a Project
                 </NavLink>
               </li>
-            ))}
-
-            <li>
-              <NavLink className="getstarted" to="/post-project">
-                Post a Project
-              </NavLink>
-            </li>
+            )}
           </ul>
           <i className="bi bi-list mobile-nav-toggle"></i>
         </nav>
