@@ -1,12 +1,25 @@
+import { useMutation, useQuery } from "@apollo/client";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { CheckCircleOutlineOutlined } from "@mui/icons-material";
 import { Box, Button, Divider } from "@mui/material";
-import React, { useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router";
+import { toast } from "react-toastify";
+import * as Yup from "yup";
 import CustomCard from "../../../components/CustomCard";
-import { CustomTextField } from "../../../components/CustomTextField";
+import {
+  CustomAutoComplete,
+  CustomTextField,
+} from "../../../components/CustomTextField";
+import { POST_PROJECT, POST_PROJECT_LOOKUPS } from "../../../graphql/job";
 
 export default function PostProject() {
-  const [apply, setApply] = useState(false);
+  const navigate = useNavigate();
+
+  const lookups = useQuery(POST_PROJECT_LOOKUPS);
+
+  const [createJob, { loading }] = useMutation(POST_PROJECT);
 
   const {
     control,
@@ -15,9 +28,23 @@ export default function PostProject() {
     formState: { errors },
   } = useForm({
     mode: "all",
-    // resolver: validator,
+    resolver: validator,
     defaultValues: {},
   });
+
+  const onSubmit = async (values) => {
+    try {
+      await createJob({ variables: { input: values } });
+
+      reset();
+      toast.success("Your Project is Successfully Posted!", { autoClose: 500 });
+      navigate("/my-jobs");
+    } catch (error) {
+      toast.error(error.message, {
+        autoClose: 500,
+      });
+    }
+  };
 
   return (
     <div className="p-2" style={{ height: "100%" }}>
@@ -46,34 +73,43 @@ export default function PostProject() {
                   <form
                     action="d-flex flex-direction-col"
                     style={{ gap: "5px" }}
+                    onSubmit={handleSubmit(onSubmit)}
                   >
                     <CustomTextField
                       lf={4}
                       tf={8}
                       control={control}
-                      name={"headline"}
+                      name={"name"}
                       label={"Headline"}
                     />
-                    <CustomTextField
+                    <CustomAutoComplete
                       lf={4}
                       tf={8}
                       control={control}
-                      name={"Category"}
+                      name={"job_category_id"}
                       label={"Category"}
+                      loading={lookups.loading}
+                      options={lookups.data?.jobCategories}
                     />
-                    <CustomTextField
+                    {/* <CustomTextField
                       lf={4}
                       tf={8}
                       control={control}
                       name={"Sub Category"}
                       label={"Sub Category"}
-                    />
-                    <CustomTextField
+                    /> */}
+                    {/* <CustomAutoComplete
                       lf={4}
                       tf={8}
                       control={control}
                       name={"skills"}
                       label={"Skills"}
+                      loading={lookups.loading}
+                      multiple
+                      options={lookups.data?.skills?.map((s) => ({
+                        id: s.id,
+                        name: s.keyskill,
+                      }))}
                     />
                     <CustomTextField
                       lf={4}
@@ -133,7 +169,7 @@ export default function PostProject() {
                       control={control}
                       name={"Attachment"}
                       label={"Attachment"}
-                    />
+                    /> */}
                     <CustomTextField
                       lf={4}
                       tf={8}
@@ -142,18 +178,17 @@ export default function PostProject() {
                       label={"Description"}
                       rows={8}
                     />
+                    <div className="d-flex mt-3 justify-content-end">
+                      <Button
+                        variant="contained"
+                        startIcon={<CheckCircleOutlineOutlined />}
+                        color="success"
+                        type={loading ? "button" : "submit"}
+                      >
+                        {loading ? "Loading..." : "Post a Job"}
+                      </Button>
+                    </div>{" "}
                   </form>
-                </div>
-
-                <div className="d-flex mt-3 justify-content-end">
-                  <Button
-                    variant="contained"
-                    startIcon={<CheckCircleOutlineOutlined />}
-                    color="success"
-                    onClick={() => {}}
-                  >
-                    Post a Job
-                  </Button>
                 </div>
               </CustomCard>
             </Box>
@@ -164,3 +199,11 @@ export default function PostProject() {
     </div>
   );
 }
+
+const validator = yupResolver(
+  Yup.object().shape({
+    name: Yup.string().required(),
+    job_category_id: Yup.number().required(),
+    description: Yup.string().required(),
+  })
+);

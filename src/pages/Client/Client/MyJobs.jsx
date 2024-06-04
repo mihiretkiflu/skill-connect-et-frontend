@@ -1,17 +1,14 @@
-import { Box, Chip, Skeleton } from "@mui/material";
-import React from "react";
-import CustomCard from "../../../components/CustomCard";
-import { useNavigate } from "react-router";
-import RightSideView from "./RightSideView";
 import { useQuery } from "@apollo/client";
-import { JOBS } from "../../../graphql/job";
+import { Box, Button, Chip, Divider, Skeleton, Stack } from "@mui/material";
+import React, { useState } from "react";
+import CustomCard from "../../../components/CustomCard";
+import { MY_JOBS } from "../../../graphql/job";
 import { seeMore } from "../../../utils/misc";
 
-export default function FindWork() {
-  const navigate = useNavigate();
+export default function MyJobs() {
+  const [application, setApplication] = useState([]);
 
-  const { data, loading } = useQuery(JOBS);
-
+  const { loading, data } = useQuery(MY_JOBS);
   return (
     <div className="p-2" style={{ height: "100%" }}>
       <div className="container" style={{ height: "100%" }}>
@@ -21,17 +18,12 @@ export default function FindWork() {
             style={{ height: "100%", overflow: "auto" }}
           >
             {!loading ? (
-              data?.Jobs.map((job) => (
+              data?.myJobs.map((job) => (
                 <Box
                   sx={{
-                    maxHeight: "20rem",
+                    maxHeight: "25rem",
                     cursor: "pointer",
                   }}
-                  onClick={() =>
-                    navigate(job.name.toLowerCase().replaceAll(" ", "_"), {
-                      state: { job },
-                    })
-                  }
                 >
                   <CustomCard
                     title={job.name}
@@ -83,6 +75,19 @@ export default function FindWork() {
                       <span>98,000 ETB Spent</span>
                       <span>Addis Ababa</span>
                     </div>
+
+                    <div className=" mt-2">
+                      <Divider />{" "}
+                    </div>
+
+                    <div className="d-flex mt-3 justify-content-start">
+                      <Button
+                        variant="outlined"
+                        onClick={() => setApplication(job?.applications)}
+                      >
+                        View Applications
+                      </Button>
+                    </div>
                   </CustomCard>
                 </Box>
               ))
@@ -91,7 +96,46 @@ export default function FindWork() {
             )}
           </div>
           <div className="col-lg-4">
-            <RightSideView />
+            <CustomCard title={"Applications"}>
+              {application?.map((app) => (
+                <Stack>
+                  <Stack direction={"row"}>
+                    {" "}
+                    <span style={{ fontWeight: "bold" }}>
+                      Frelancer Name :{" "}
+                    </span>{" "}
+                    <span>Freelance X</span>
+                  </Stack>
+                  <Stack direction={"row"}>
+                    {" "}
+                    <span style={{ fontWeight: "bold" }}>
+                      Frelancer Name :{" "}
+                    </span>{" "}
+                    <span>{app.price_offer} ETB</span>
+                  </Stack>
+                  <Stack direction={"row"}>
+                    {" "}
+                    <span style={{ fontWeight: "bold" }}>
+                      Applied At :{" "}
+                    </span>{" "}
+                    <span>{new Date(app.createdAt).toLocaleString()} </span>
+                  </Stack>
+                  <Stack>
+                    {" "}
+                    <span style={{ fontWeight: "bold" }}>
+                      About Freelancer
+                    </span>{" "}
+                    <span>{app.about_freelancer}</span>
+                  </Stack>
+
+                  <div className="d-flex mt-3 justify-content-start">
+                    <Button variant="outlined" onClick={() => {}}>
+                      Send Message
+                    </Button>
+                  </div>
+                </Stack>
+              ))}
+            </CustomCard>
           </div>{" "}
         </div>
       </div>

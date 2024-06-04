@@ -5,14 +5,14 @@ import {
   createHttpLink,
   split,
 } from "@apollo/client";
-import React from "react";
-import { useSelector } from "react-redux";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { createClient } from "graphql-ws";
+import React from "react";
+import { useSelector } from "react-redux";
 import { Outlet } from "react-router";
 
-const authClient = new ApolloClient({
+const apolloClient = new ApolloClient({
   cache: new InMemoryCache(),
   link: createHttpLink({
     uri: "http://localhost:5000/graphql",
@@ -55,9 +55,9 @@ export default function AuthWrapper() {
     httpLink
   );
 
-  authClient.setLink(splitLink);
+  apolloClient.setLink(splitLink);
   return (
-    <ApolloProvider client={authClient}>
+    <ApolloProvider client={apolloClient}>
       <Outlet />
     </ApolloProvider>
   );

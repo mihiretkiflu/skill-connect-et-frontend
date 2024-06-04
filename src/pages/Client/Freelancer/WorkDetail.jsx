@@ -1,13 +1,27 @@
+import { useMutation } from "@apollo/client";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { CheckCircleOutlineOutlined } from "@mui/icons-material";
 import { Box, Button, Chip, Divider } from "@mui/material";
 import React, { useState } from "react";
-import CustomCard from "../../../components/CustomCard";
-import RightSideView from "./RightSideView";
-import { CustomTextField } from "../../../components/CustomTextField";
 import { useForm } from "react-hook-form";
-import { CheckCircleOutlineOutlined } from "@mui/icons-material";
+import { useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router";
+import { toast } from "react-toastify";
+import * as Yup from "yup";
+import CustomCard from "../../../components/CustomCard";
+import { CustomTextField } from "../../../components/CustomTextField";
+import { APPLY_FOR_JOB } from "../../../graphql/job";
+import RightSideView from "./RightSideView";
 
 export default function WorkDetail() {
+  const { currentUser } = useSelector((state) => state.auth);
+
+  const navigate = useNavigate();
+
+  const { state } = useLocation();
   const [apply, setApply] = useState(false);
+
+  const [applyToJob, { loading }] = useMutation(APPLY_FOR_JOB);
 
   const {
     control,
@@ -16,9 +30,33 @@ export default function WorkDetail() {
     formState: { errors },
   } = useForm({
     mode: "all",
-    // resolver: validator,
+    resolver: validator,
     defaultValues: {},
   });
+
+  const onSubmit = async (values) => {
+    try {
+      await applyToJob({
+        variables: {
+          input: {
+            employer_id: state?.job?.employer_id,
+            job_id: state?.job?.id,
+            price_offer: parseFloat(values.price_offer || 0),
+            ...values,
+          },
+        },
+      });
+
+      toast.success("Job Successfully Applied !", { autoClose: 500 });
+      // navigate("/find-work");
+      reset();
+      setApply(false);
+    } catch (error) {
+      toast.error(error.message, {
+        autoClose: 500,
+      });
+    }
+  };
 
   return (
     <div className="p-2" style={{ height: "100%" }}>
@@ -32,8 +70,8 @@ export default function WorkDetail() {
               }}
             >
               <CustomCard
-                title={"Experienced React developer for fixing few bugs"}
-                subTitle={"Posted 2 hours ago"}
+                title={state?.job?.name}
+                subTitle={new Date(state?.job?.createdAt).toLocaleString()}
                 customStyle={{
                   "&:hover": {
                     background: "grey",
@@ -52,22 +90,7 @@ export default function WorkDetail() {
                 </div>
 
                 <div className="pt-3">
-                  <p>
-                    Hi guys we have a MERN stack website spillword.com. We would
-                    like to add the following functionalities within the
-                    subdomain app.spillword.com Add fireflies.ai: Same design,
-                    functionalities, credit system etc as fireflies.ai. Nothing
-                    needs to change. Including the left sidebar. You can use the
-                    html and page ripper to develop the frontend.
-                  </p>
-                  <p>
-                    Hi guys we have a MERN stack website spillword.com. We would
-                    like to add the following functionalities within the
-                    subdomain app.spillword.com Add fireflies.ai: Same design,
-                    functionalities, credit system etc as fireflies.ai. Nothing
-                    needs to change. Including the left sidebar. You can use the
-                    html and page ripper to develop the frontend.
-                  </p>
+                  <p>{state?.job?.description}</p>
                 </div>
 
                 <div className="d-flex" style={{ gap: ".5rem" }}>
@@ -85,7 +108,7 @@ export default function WorkDetail() {
                     color: "rgb(115 129 155)",
                   }}
                 >
-                  <span>50 Proposals</span>
+                  <span>{state?.job?.applications?.length} Proposals</span>
                   <span>Payment Verified</span>
                   <span>*****</span>
                   <span>98,000 ETB Spent</span>
@@ -97,7 +120,7 @@ export default function WorkDetail() {
                 </div>
 
                 <div className="d-flex mt-3 justify-content-start">
-                  {!apply && (
+                  {!apply && currentUser?.role === "freelance" && (
                     <Button variant="outlined" onClick={() => setApply(true)}>
                       View Application Detail
                     </Button>
@@ -109,51 +132,55 @@ export default function WorkDetail() {
                     <form
                       action="d-flex flex-direction-col"
                       style={{ gap: "5px" }}
+                      onSubmit={handleSubmit(onSubmit)}
                     >
                       <CustomTextField
                         lf={4}
                         tf={8}
                         control={control}
-                        name={"bid"}
-                        label={"Bid"}
+                        name={"price_offer"}
+                        label={"Price Offer"}
+                        type={"number"}
                       />
-                      <CustomTextField
+                      {/* <CustomTextField
                         lf={4}
                         tf={8}
                         control={control}
                         name={"duration"}
                         label={"Project Duration"}
-                      />
+                      /> */}
                       <CustomTextField
                         lf={4}
                         tf={8}
                         control={control}
-                        name={"cover_letter"}
+                        name={"about_freelancer"}
                         label={"Cover Letter"}
                         rows={8}
                       />
+                      <div className="d-flex mt-3 justify-content-between">
+                        {apply && (
+                          <Button
+                            variant="outlined"
+                            onClick={() => setApply(false)}
+                          >
+                            Hide Application Detail
+                          </Button>
+                        )}
+
+                        {apply && (
+                          <Button
+                            variant="contained"
+                            startIcon={<CheckCircleOutlineOutlined />}
+                            color="success"
+                            type={loading ? "button" : "submit"}
+                          >
+                            {loading ? "Loading..." : "Apply"}
+                          </Button>
+                        )}
+                      </div>{" "}
                     </form>
                   </div>
                 )}
-
-                <div className="d-flex mt-3 justify-content-between">
-                  {apply && (
-                    <Button variant="outlined" onClick={() => setApply(false)}>
-                      Hide Application Detail
-                    </Button>
-                  )}
-
-                  {apply && (
-                    <Button
-                      variant="contained"
-                      startIcon={<CheckCircleOutlineOutlined />}
-                      color="success"
-                      onClick={() => {}}
-                    >
-                      Apply
-                    </Button>
-                  )}
-                </div>
               </CustomCard>
             </Box>
           </div>
@@ -165,3 +192,10 @@ export default function WorkDetail() {
     </div>
   );
 }
+
+const validator = yupResolver(
+  Yup.object().shape({
+    price_offer: Yup.number().required(),
+    about_freelancer: Yup.string().required(),
+  })
+);

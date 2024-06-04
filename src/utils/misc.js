@@ -9,8 +9,7 @@ export function randomNumber(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-export const seeMore = (str) => {
-  let length = 120;
+export const seeMore = (str, length = 120) => {
 
   if (str[length] !== " ") {
     const space = str.indexOf(" ", length);

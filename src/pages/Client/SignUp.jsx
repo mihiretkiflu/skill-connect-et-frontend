@@ -82,9 +82,15 @@ export default function SignUp() {
                     <CustomTextField
                       size={"small"}
                       control={control}
+                      name={"username"}
+                      label={"Username"}
+                    />
+                    <CustomTextField
+                      size={"small"}
+                      control={control}
                       name={"role"}
                       label={"Role"}
-                      options={["freelance", "employer"]}
+                      options={roles}
                     />
                     <CustomTextField
                       size={"small"}
@@ -93,13 +99,6 @@ export default function SignUp() {
                       label={"Password"}
                       type={"password"}
                     />
-                    {/* <CustomTextField
-                      size={"small"}
-                      control={control}
-                      name={"confirm_password"}
-                      label={"Confirm Password"}
-                      type={"password"}
-                    /> */}
 
                     <div class="col-12">
                       <button
@@ -131,6 +130,7 @@ const validator = yupResolver(
     firstname: Yup.string().required(),
     lastname: Yup.string().required(),
     email: Yup.string().required(),
+    username: Yup.string().required(),
     role: Yup.string().required(),
     password: Yup.string().required("Required"),
   })
