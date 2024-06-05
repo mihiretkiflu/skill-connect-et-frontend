@@ -10,6 +10,7 @@ export default function MyJobs() {
   const navigate = useNavigate();
 
   const [application, setApplication] = useState([]);
+  const [job, setJob] = useState({});
 
   const { loading, data } = useQuery(MY_JOBS);
   return (
@@ -87,7 +88,13 @@ export default function MyJobs() {
                     <div className="d-flex mt-3 justify-content-start">
                       <Button
                         variant="outlined"
-                        onClick={() => setApplication(job?.applications)}
+                        onClick={() => {
+                          setApplication(job?.applications);
+                          setJob({
+                            id: job?.id,
+                            employer_id: job?.employer_id,
+                          });
+                        }}
                       >
                         View Applications
                       </Button>
@@ -144,6 +151,8 @@ export default function MyJobs() {
                         navigate("/messages", {
                           state: {
                             freelancer: app.freelancer,
+                            job: job,
+                            application: app,
                           },
                         });
                       }}
