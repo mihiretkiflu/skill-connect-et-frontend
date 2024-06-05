@@ -15,8 +15,8 @@ export function CustomTextField({
   ...props
 }) {
   return (
-    <div class="d-flex mt-3">
-      <div style={{ flex: 12 || tf || 7 }} class="input-group">
+    <div className="d-flex mt-3">
+      <div style={{ flex: 12 || tf || 7 }} className="input-group">
         <Controller
           control={control}
           name={name}
@@ -65,8 +65,8 @@ export function CustomAutoComplete({
   ...props
 }) {
   return (
-    <div class="d-flex mt-3">
-      <div style={{ flex: 12 || tf || 7 }} class="input-group">
+    <div className="d-flex mt-3">
+      <div style={{ flex: 12 || tf || 7 }} className="input-group">
         <Controller
           control={control}
           name={name}

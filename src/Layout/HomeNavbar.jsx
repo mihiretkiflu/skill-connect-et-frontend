@@ -79,7 +79,7 @@ export default function HomeNavbar() {
             {navbars.map(
               (navbar) =>
                 !navbar?.hide && (
-                  <li>
+                  <li key={navbar.label}>
                     <NavLink
                       className={({ isActive, isPending }) =>
                         isPending
@@ -107,9 +107,9 @@ export default function HomeNavbar() {
 
           <ul>
             {currentUser?.id && (
-              <li class="nav-item dropdown pe-3">
+              <li className="nav-item dropdown pe-3">
                 <a
-                  class="nav-link nav-profile d-flex align-items-center pe-0"
+                  className="nav-link nav-profile d-flex align-items-center pe-0"
                   href="#"
                   data-bs-toggle="dropdown"
                   style={{ padding: "0px 0 0px 30px" }}
@@ -117,17 +117,17 @@ export default function HomeNavbar() {
                   <img
                     src="assets/img/profile-img.jpg"
                     alt="Profile"
-                    class="rounded-circle"
+                    className="rounded-circle"
                     style={{ height: "3rem" }}
                   />
-                  <span class="d-none d-md-block dropdown-toggle ps-2">
+                  <span className="d-none d-md-block dropdown-toggle ps-2">
                     {currentUser.firstname}{" "}
                     {currentUser.lastname[0].toUpperCase() + "."}
                   </span>{" "}
                 </a>
 
-                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
-                  <li class="dropdown-header">
+                <ul className="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+                  <li className="dropdown-header">
                     <h6 style={{ fontWeight: "bold" }}>
                       {currentUser.firstname} {currentUser.lastname}
                     </h6>
@@ -138,30 +138,33 @@ export default function HomeNavbar() {
                     </span>
                   </li>
                   <li>
-                    <hr class="dropdown-divider" />
+                    <hr className="dropdown-divider" />
                   </li>
 
                   <li>
                     <Link
-                      class="dropdown-item d-flex align-items-center justify-content-start"
+                      className="dropdown-item d-flex align-items-center justify-content-start"
                       to={"/my-profile"}
                     >
-                      <i class="bi bi-person" style={{ fontSize: "18px" }}></i>
+                      <i
+                        className="bi bi-person"
+                        style={{ fontSize: "18px" }}
+                      ></i>
                       <span>My Profile</span>
                     </Link>
                   </li>
                   <li>
-                    <hr class="dropdown-divider" />
+                    <hr className="dropdown-divider" />
                   </li>
 
                   <li>
                     <a
-                      class="dropdown-item d-flex align-items-center justify-content-start"
+                      className="dropdown-item d-flex align-items-center justify-content-start"
                       href="#"
                       onClick={logout}
                     >
                       <i
-                        class="bi bi-box-arrow-right"
+                        className="bi bi-box-arrow-right"
                         style={{ fontSize: "18px" }}
                       ></i>
                       <span>Sign Out</span>

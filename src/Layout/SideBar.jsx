@@ -20,39 +20,39 @@ export default function SideBar() {
   ];
 
   return (
-    <aside id="sidebar" class="sidebar">
-      <ul class="sidebar-nav" id="sidebar-nav">
-        <li class="nav-heading">Pages</li>
+    <aside id="sidebar" className="sidebar">
+      <ul className="sidebar-nav" id="sidebar-nav">
+        <li className="nav-heading">Pages</li>
 
         {menus?.map((menu) =>
           !menu.subMenus ? (
-            <li class="nav-item" key={menu.label}>
-              <Link class="nav-link collapsed" to={menu.link}>
-                <i class="bi bi-grid"></i>
+            <li className="nav-item" key={menu.label}>
+              <Link className="nav-link collapsed" to={menu.link}>
+                <i className="bi bi-grid"></i>
                 <span>{menu.label}</span>
               </Link>
             </li>
           ) : (
-            <li class="nav-item" key={menu.label}>
+            <li className="nav-item" key={menu.label}>
               <a
-                class="nav-link collapsed"
+                className="nav-link collapsed"
                 data-bs-target="#components-nav"
                 data-bs-toggle="collapse"
                 href="#"
               >
-                <i class="bi bi-menu-button-wide"></i>
+                <i className="bi bi-menu-button-wide"></i>
                 <span>{menu.label}</span>
-                <i class="bi bi-chevron-down ms-auto"></i>
+                <i className="bi bi-chevron-down ms-auto"></i>
               </a>
               <ul
                 id="components-nav"
-                class="nav-content collapse"
+                className="nav-content collapse"
                 data-bs-parent="#sidebar-nav"
               >
                 {menu.subMenus.map((subMenu) => (
                   <li key={subMenu.label}>
                     <Link to={menu.link + subMenu.link}>
-                      <i class="bi bi-circle"></i>
+                      <i className="bi bi-circle"></i>
                       <span>{subMenu.label}</span>
                     </Link>
                   </li>

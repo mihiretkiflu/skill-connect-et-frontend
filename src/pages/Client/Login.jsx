@@ -41,24 +41,24 @@ export default function Login() {
   };
 
   return (
-    <div class="container">
-      <section class="section register d-flex flex-column align-items-center justify-content-center">
-        <div class="container">
-          <div class="row justify-content-center mt-5">
-            <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
-              <div class="card mb-0">
-                <div class="card-body">
-                  <div class="pt-0 pb-2">
-                    <h5 class="card-title text-center pb-0 fs-4">
+    <div className="container">
+      <section className="section register d-flex flex-column align-items-center justify-content-center">
+        <div className="container">
+          <div className="row justify-content-center mt-5">
+            <div className="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
+              <div className="card mb-0">
+                <div className="card-body">
+                  <div className="pt-0 pb-2">
+                    <h5 className="card-title text-center pb-0 fs-4">
                       Login into an Account
                     </h5>
-                    <p class="text-center small">
+                    <p className="text-center small">
                       Enter your personal details to login account
                     </p>
                   </div>
 
                   <form
-                    class="row g-3 needs-validation"
+                    className="row g-3 needs-validation"
                     onSubmit={handleSubmit(onSubmit)}
                   >
                     <CustomTextField
@@ -74,16 +74,16 @@ export default function Login() {
                       type={"password"}
                     />
 
-                    <div class="col-12">
+                    <div className="col-12">
                       <button
-                        class="btn btn-primary w-100"
+                        className="btn btn-primary w-100"
                         type={loading ? "button" : "submit"}
                       >
                         {loading ? "Loading..." : "Login"}
                       </button>
                     </div>
-                    <div class="col-12">
-                      <p class="small mb-0">
+                    <div className="col-12">
+                      <p className="small mb-0">
                         Not sign up yet?
                         <Link to={"/sign-up"}>Sign in</Link>
                       </p>

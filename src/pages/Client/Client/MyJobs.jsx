@@ -23,6 +23,7 @@ export default function MyJobs() {
             {!loading ? (
               data?.myJobs.map((job) => (
                 <Box
+                  key={job.id}
                   sx={{
                     maxHeight: "25rem",
                     cursor: "pointer",
@@ -31,11 +32,11 @@ export default function MyJobs() {
                   <CustomCard
                     title={job.name}
                     subTitle={new Date(job.createdAt).toLocaleString()}
-                    customStyle={{
-                      "&:hover": {
-                        background: "grey",
-                      },
-                    }}
+                    // customStyle={{
+                    //   "&:hover": {
+                    //     background: "grey",
+                    //   },
+                    // }}
                   >
                     <div
                       className="d-flex"
@@ -101,7 +102,12 @@ export default function MyJobs() {
           <div className="col-lg-4">
             <CustomCard title={"Applications"}>
               {application?.map((app) => (
-                <Stack borderBottom={1} borderColor={"divider"} pb={1}>
+                <Stack
+                  key={app.id}
+                  borderBottom={1}
+                  borderColor={"divider"}
+                  pb={1}
+                >
                   <Stack direction={"row"}>
                     {" "}
                     <span style={{ fontWeight: "bold" }}>

@@ -4,29 +4,29 @@ import React from "react";
 export default function CustomCard({ title, subTitle, customStyle, children }) {
   return (
     <Box
-      class="card"
+      className="card"
       sx={{
         height: "100%",
-        background: "blue",
+        // background: "blue",
         "&:hover": {
-          backgroundColor: "red",
+          backgroundColor: "divider",
         },
         ...customStyle,
       }}
     >
-      <div class="card-body">
+      <div className="card-body">
         <div className="d-flex align-items-center">
-          <h5 style={{ flex: 1 }} class="card-title">
+          <h5 style={{ flex: 1 }} className="card-title">
             {title} {subTitle && <span>{"| " + subTitle}</span>}
           </h5>
 
           <div className="col-">
-            <a class="icon" href="#">
-              <i class="bi bi-three-dots"></i>{" "}
+            <a className="icon" href="#">
+              <i className="bi bi-three-dots"></i>{" "}
             </a>
           </div>
         </div>
-        <div class="">{children}</div>
+        <div className="">{children}</div>
       </div>
     </Box>
   );

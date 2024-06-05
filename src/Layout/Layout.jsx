@@ -9,20 +9,20 @@ export default function Layout() {
       <Header />
       <SideBar />
 
-      <main id="main" class="main">
-        <div class="pagetitle">
+      <main id="main" className="main">
+        <div className="pagetitle">
           <h1>Dashboard</h1>
           <nav>
-            <ol class="breadcrumb">
-              <li class="breadcrumb-item">
+            <ol className="breadcrumb">
+              <li className="breadcrumb-item">
                 <a href="index.html">Home</a>
               </li>
-              <li class="breadcrumb-item active">Dashboard</li>
+              <li className="breadcrumb-item active">Dashboard</li>
             </ol>
           </nav>
         </div>
 
-        <section class="section dashboard">
+        <section className="section dashboard">
           <Outlet />
         </section>
       </main>
