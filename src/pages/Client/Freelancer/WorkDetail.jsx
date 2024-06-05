@@ -5,7 +5,7 @@ import { Box, Button, Chip, Divider } from "@mui/material";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
-import { useLocation, useNavigate } from "react-router";
+import { useLocation } from "react-router";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 import CustomCard from "../../../components/CustomCard";
@@ -15,8 +15,6 @@ import RightSideView from "./RightSideView";
 
 export default function WorkDetail() {
   const { currentUser } = useSelector((state) => state.auth);
-
-  const navigate = useNavigate();
 
   const { state } = useLocation();
   const [apply, setApply] = useState(false);

@@ -15,7 +15,7 @@ import { Outlet } from "react-router";
 const apolloClient = new ApolloClient({
   cache: new InMemoryCache(),
   link: createHttpLink({
-    uri: "http://localhost:5000/graphql",
+    uri: "http://localhost:4000/graphql",
     credentials: "include",
     headers: (token) => ({
       authorization: token ? `Bearer ${token}` : "",
@@ -27,7 +27,7 @@ export default function AuthWrapper() {
   const { token } = useSelector((state) => state.auth);
 
   const httpLink = createHttpLink({
-    uri: "http://localhost:5000/graphql",
+    uri: "http://localhost:4000/graphql",
     credentials: "include",
     headers: {
       authorization: token ? `Bearer ${token}` : "",

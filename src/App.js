@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import AuthWrapper from "./components/AuthWrapper";
-import HomeLayout from "./layout/HomeLayout";
-import Layout from "./layout/Layout";
+import HomeLayout from "./Layout/HomeLayout";
+import Layout from "./Layout/Layout";
 import Dashboard from "./pages/Admin/Dashboard";
 import Chat from "./pages/Client/Client/Chat";
 import FindFreelancer from "./pages/Client/Client/FindFreelancer";

@@ -1,6 +1,9 @@
 import React from "react";
 import "./chat.css";
+import { useLocation } from "react-router";
 export default function Chat() {
+  const { state } = useLocation();
+
   return (
     <div class="container p-0" style={{ height: "100%" }}>
       <div

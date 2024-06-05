@@ -20,10 +20,10 @@ import { persistor, store } from "./redux/store";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
-const authClient = new ApolloClient({
+const apolloClient = new ApolloClient({
   cache: new InMemoryCache(),
   link: createHttpLink({
-    uri: "http://localhost:5000/graphql",
+    uri: "http://localhost:4000/graphql",
     credentials: "include",
     headers: (token) => ({
       authorization: token ? `Bearer ${token}` : "",
@@ -46,7 +46,7 @@ root.render(
       <PersistGate persistor={persistor}>
         <ToastContainer theme="colored" />
         <BrowserRouter>
-          <ApolloProvider client={authClient}>
+          <ApolloProvider client={apolloClient}>
             <App />
           </ApolloProvider>
         </BrowserRouter>

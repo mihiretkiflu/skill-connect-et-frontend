@@ -4,8 +4,11 @@ import React, { useState } from "react";
 import CustomCard from "../../../components/CustomCard";
 import { MY_JOBS } from "../../../graphql/job";
 import { seeMore } from "../../../utils/misc";
+import { useNavigate } from "react-router";
 
 export default function MyJobs() {
+  const navigate = useNavigate();
+
   const [application, setApplication] = useState([]);
 
   const { loading, data } = useQuery(MY_JOBS);
@@ -98,13 +101,13 @@ export default function MyJobs() {
           <div className="col-lg-4">
             <CustomCard title={"Applications"}>
               {application?.map((app) => (
-                <Stack>
+                <Stack borderBottom={1} borderColor={"divider"} pb={1}>
                   <Stack direction={"row"}>
                     {" "}
                     <span style={{ fontWeight: "bold" }}>
                       Frelancer Name :{" "}
                     </span>{" "}
-                    <span>Freelance X</span>
+                    <span>{app?.freelancer?.fullname}</span>
                   </Stack>
                   <Stack direction={"row"}>
                     {" "}
@@ -125,11 +128,20 @@ export default function MyJobs() {
                     <span style={{ fontWeight: "bold" }}>
                       About Freelancer
                     </span>{" "}
-                    <span>{app.about_freelancer}</span>
+                    {/* <span>{app.about_freelancer}</span> */}
                   </Stack>
 
                   <div className="d-flex mt-3 justify-content-start">
-                    <Button variant="outlined" onClick={() => {}}>
+                    <Button
+                      variant="outlined"
+                      onClick={() => {
+                        navigate("/messages", {
+                          state: {
+                            freelancer: app.freelancer,
+                          },
+                        });
+                      }}
+                    >
                       Send Message
                     </Button>
                   </div>

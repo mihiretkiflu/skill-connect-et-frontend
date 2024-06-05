@@ -66,30 +66,30 @@ export const MY_JOBS = gql`
         price_offer
         about_freelancer
         createdAt
-        # freelancer {
-        #   id
-        #   avatar
-        #   firstname
-        #   lastname
-        #   fullname
-        #   username
-        #   gender
-        #   password
-        #   bio
-        #   phone
-        #   email
-        #   address
-        #   portfolio_dir
-        #   role
-        #   createdAt
-        #   updatedAt
-        #   skills {
-        #     keyskill
-        #   }
-        #   jobCategories {
-        #     name
-        #   }
-        # }
+        freelancer {
+          id
+          avatar
+          firstname
+          lastname
+          fullname
+          username
+          gender
+          password
+          bio
+          phone
+          email
+          address
+          portfolio_dir
+          role
+          createdAt
+          updatedAt
+          # skills {
+          #   keyskill
+          # }
+          # jobCategories {
+          #   name
+          # }
+        }
       }
       employer_id
     }
