@@ -7,7 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 import { CustomTextField } from "../../components/CustomTextField";
-import { CREATE_USER, LOGIN_USER } from "../../graphql/user";
+import { LOGIN_USER } from "../../graphql/user";
 import { loginFinished } from "../../redux/slices/authSlice";
 
 export default function Login() {
@@ -32,7 +32,11 @@ export default function Login() {
       const { data } = await loginUser({ variables: { input: values } });
 
       dispatch(loginFinished(data?.loginUser));
-      navigate("/find-work");
+
+      console.log(data?.loginUser);
+      // return;
+      if (data?.loginUser?.user?.role === "admin") navigate("/admin");
+      else navigate("/find-work");
     } catch (error) {
       toast.error(error.message, {
         autoClose: 500,

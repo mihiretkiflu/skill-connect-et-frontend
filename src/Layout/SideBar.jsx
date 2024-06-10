@@ -3,20 +3,26 @@ import { Link } from "react-router-dom";
 
 export default function SideBar() {
   const menus = [
-    { label: "Dashboard", link: "/dashboard" },
-    { label: "Clients", link: "/clients" },
-    { label: "Freelancer", link: "/freelancers" },
-    { label: "Jobs", link: "/jobs" },
+    { label: "Dashboard", link: "/admin/dashboard", icon: "bi-grid-fill" },
+    { label: "Clients", link: "/admin/clients", icon: "bi-people-fill" },
+    {
+      label: "Freelancer",
+      link: "/admin/freelancers",
+      icon: "bi-person-workspace",
+    },
+    { label: "Jobs", link: "/admin/jobs", icon: "bi-journal-bookmark" },
 
     {
       label: "Job Category",
-      link: "/job-category",
+      link: "/admin/job-category",
+      icon: "bi-list-nested",
     },
     {
       label: "Job Sub Category",
-      link: "/job-sub-category",
+      link: "/admin/job-sub-category",
+      icon: "bi-list-nested",
     },
-    { label: "Skills", link: "/Skills" },
+    { label: "Skills", link: "/admin/Skills", icon: "bi-card-checklist" },
   ];
 
   return (
@@ -28,7 +34,7 @@ export default function SideBar() {
           !menu.subMenus ? (
             <li className="nav-item" key={menu.label}>
               <Link className="nav-link collapsed" to={menu.link}>
-                <i className="bi bi-grid"></i>
+                <i className={"bi " + menu.icon}></i>
                 <span>{menu.label}</span>
               </Link>
             </li>

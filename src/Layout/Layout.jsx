@@ -22,7 +22,10 @@ export default function Layout() {
           </nav>
         </div>
 
-        <section className="section dashboard">
+        <section
+          className="section dashboard"
+          style={{ height: "calc(100vh - 11rem)" }}
+        >
           <Outlet />
         </section>
       </main>

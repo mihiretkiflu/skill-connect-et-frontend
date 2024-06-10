@@ -1,10 +1,16 @@
 import { Route, Routes } from "react-router-dom";
-import AuthWrapper from "./components/AuthWrapper";
 import HomeLayout from "./Layout/HomeLayout";
 import Layout from "./Layout/Layout";
+import AuthWrapper from "./components/AuthWrapper";
+import Clients from "./pages/Admin/Clients";
 import Dashboard from "./pages/Admin/Dashboard";
+import Freelancer from "./pages/Admin/Freelalncer";
+import JobCategory from "./pages/Admin/JobCategory";
+import Jobs from "./pages/Admin/Jobs";
+import Skills from "./pages/Admin/Skills";
 import Chat from "./pages/Client/Client/Chat";
 import FindFreelancer from "./pages/Client/Client/FindFreelancer";
+import MyJobs from "./pages/Client/Client/MyJobs";
 import PostProject from "./pages/Client/Client/PostProject";
 import CreateProfile from "./pages/Client/Freelancer/FillProfile";
 import FindWork from "./pages/Client/Freelancer/FindWork";
@@ -13,7 +19,6 @@ import WorkDetail from "./pages/Client/Freelancer/WorkDetail";
 import Home from "./pages/Client/Home";
 import Login from "./pages/Client/Login";
 import SignUp from "./pages/Client/SignUp";
-import MyJobs from "./pages/Client/Client/MyJobs";
 
 function App() {
   return (
@@ -40,6 +45,13 @@ function App() {
         </Route>
         <Route path="/admin" element={<Layout />}>
           <Route path="" element={<Dashboard />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="clients" element={<Clients />} />
+          <Route path="freelancers" element={<Freelancer />} />
+          <Route path="jobs" element={<Jobs />} />
+          <Route path="job-category" element={<JobCategory />} />
+          <Route path="job-sub-category" element={<Dashboard />} />
+          <Route path="Skills" element={<Skills />} />
         </Route>
       </Route>
     </Routes>
