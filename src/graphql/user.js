@@ -18,11 +18,24 @@ export const LOGIN_USER = gql`
       token
       user {
         id
+        avatar
         firstname
         lastname
+        username
+        gender
+        bio
+        phone
         email
+        address
+        portfolio_dir
         role
       }
     }
+  }
+`;
+
+export const FILL_FREELANCER_PROFILE = gql`
+  mutation UpdateProfile($input: UpdateProfileInput) {
+    updateProfile(input: $input)
   }
 `;

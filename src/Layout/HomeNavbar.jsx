@@ -1,14 +1,22 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
+import { useSubscription } from "@apollo/client";
+import { Avatar } from "@mui/material";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, NavLink, useNavigate } from "react-router-dom";
+import { CONTRACT_REQUESTED } from "../graphql/contract";
 import { logoutFinished } from "../redux/slices/authSlice";
 
 export default function HomeNavbar() {
+  const { t } = useTranslation();
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const { currentUser } = useSelector((state) => state.auth);
+
+  const { data, loading } = useSubscription(CONTRACT_REQUESTED);
 
   const navbars = [
     {
@@ -67,6 +75,8 @@ export default function HomeNavbar() {
     navigate("/");
   };
 
+  console.log({ data });
+
   return (
     <header id="header" className="fixed-top">
       <div className="container d-flex align-items-center justify-content-between">
@@ -99,7 +109,7 @@ export default function HomeNavbar() {
             {currentUser?.role === "employer" && (
               <li>
                 <NavLink className="getstarted" to="/post-project">
-                  Post a Project
+                  {t("Post a Project")}
                 </NavLink>
               </li>
             )}
@@ -114,12 +124,13 @@ export default function HomeNavbar() {
                   data-bs-toggle="dropdown"
                   style={{ padding: "0px 0 0px 30px" }}
                 >
-                  <img
+                  {/* <img
                     src="assets/img/profile-img.jpg"
                     alt="Profile"
                     className="rounded-circle"
                     style={{ height: "3rem" }}
-                  />
+                  /> */}
+                  <Avatar></Avatar>
                   <span className="d-none d-md-block dropdown-toggle ps-2">
                     {currentUser.firstname}{" "}
                     {currentUser.lastname[0].toUpperCase() + "."}
@@ -132,9 +143,11 @@ export default function HomeNavbar() {
                       {currentUser.firstname} {currentUser.lastname}
                     </h6>
                     <span style={{ textTransform: "capitalize" }}>
-                      {currentUser.role === "freelance"
-                        ? "Freelancer"
-                        : "Client"}
+                      {t(
+                        currentUser.role === "freelance"
+                          ? "Freelancer"
+                          : "Client"
+                      )}
                     </span>
                   </li>
                   <li>
@@ -150,7 +163,7 @@ export default function HomeNavbar() {
                         className="bi bi-person"
                         style={{ fontSize: "18px" }}
                       ></i>
-                      <span>My Profile</span>
+                      <span>{t("My Profile")}</span>
                     </Link>
                   </li>
                   <li>
@@ -167,7 +180,7 @@ export default function HomeNavbar() {
                         className="bi bi-box-arrow-right"
                         style={{ fontSize: "18px" }}
                       ></i>
-                      <span>Sign Out</span>
+                      <span>{t("Sign Out")}</span>
                     </a>
                   </li>
                 </ul>

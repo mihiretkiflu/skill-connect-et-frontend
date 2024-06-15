@@ -12,8 +12,10 @@ import Chat from "./pages/Client/Client/Chat";
 import FindFreelancer from "./pages/Client/Client/FindFreelancer";
 import MyJobs from "./pages/Client/Client/MyJobs";
 import PostProject from "./pages/Client/Client/PostProject";
+import ContractDetail from "./pages/Client/Freelancer/ContractDetail";
 import CreateProfile from "./pages/Client/Freelancer/FillProfile";
 import FindWork from "./pages/Client/Freelancer/FindWork";
+import MyContractOffers from "./pages/Client/Freelancer/MyContractOffers";
 import ViewFreelancerProfile from "./pages/Client/Freelancer/ViewFreelancerProfile";
 import WorkDetail from "./pages/Client/Freelancer/WorkDetail";
 import Home from "./pages/Client/Home";
@@ -40,7 +42,10 @@ function App() {
           <Route path="/post-project" element={<PostProject />} />
           <Route path="/create-profile" element={<CreateProfile />} />
           <Route path="/messages" element={<Chat />} />
-          <Route path="/my-contracts" element={<div></div>} />
+          <Route path="/my-contracts">
+            <Route path="" element={<MyContractOffers />} />
+            <Route path=":id" element={<ContractDetail />} />
+          </Route>
           <Route path="/my-jobs" element={<MyJobs />} />
         </Route>
         <Route path="/admin" element={<Layout />}>

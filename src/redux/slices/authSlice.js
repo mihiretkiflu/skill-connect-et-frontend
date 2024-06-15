@@ -21,9 +21,13 @@ const authSlice = createSlice({
     addAvatar(state, action) {
       state.avatar = action.payload;
     },
+    fillFProfile(state, action) {
+      state.currentUser = action.payload;
+    },
   },
 });
 
-export const { loginFinished, logoutFinished, addAvatar } = authSlice.actions;
+export const { loginFinished, logoutFinished, addAvatar, fillFProfile } =
+  authSlice.actions;
 
 export default authSlice.reducer;

@@ -1,13 +1,16 @@
+import { useQuery } from "@apollo/client";
 import { Box, Chip, Skeleton } from "@mui/material";
 import React from "react";
-import CustomCard from "../../../components/CustomCard";
 import { useNavigate } from "react-router";
-import RightSideView from "./RightSideView";
-import { useQuery } from "@apollo/client";
+import CustomCard from "../../../components/CustomCard";
 import { JOBS } from "../../../graphql/job";
 import { seeMore } from "../../../utils/misc";
+import RightSideView from "./RightSideView";
+import { useTranslation } from "react-i18next";
 
 export default function FindWork() {
+  const { t } = useTranslation();
+
   const navigate = useNavigate();
 
   const { data, loading } = useQuery(JOBS);
@@ -36,13 +39,8 @@ export default function FindWork() {
                   <CustomCard
                     title={job.name}
                     subTitle={new Date(job.createdAt).toLocaleString()}
-                    customStyle={{
-                      "&:hover": {
-                        background: "grey",
-                      },
-                    }}
                   >
-                    <div
+                    {/* <div
                       className="d-flex"
                       style={{
                         gap: "1rem",
@@ -52,7 +50,7 @@ export default function FindWork() {
                     >
                       <span>Fixed Price</span> -<span>Intermediate</span> -
                       <span>Estimated Budget : 10000 ETB</span>
-                    </div>
+                    </div> */}
 
                     <div className="pt-3" style={{ height: "10rem" }}>
                       <p>
@@ -63,10 +61,11 @@ export default function FindWork() {
                     </div>
 
                     <div className="d-flex" style={{ gap: ".5rem" }}>
-                      <Chip size="small" label={"MongoDB"} />
-                      <Chip size="small" label={"ExpressJS"} />
-                      <Chip size="small" label={"React"} />
-                      <Chip size="small" label={"Node.js"} />
+                      <Chip size="small" label={job?.skill?.name} />
+
+                      <span>
+                        {t("n Proposals", { count: job?.applications?.length })}
+                      </span>
                     </div>
 
                     <div
@@ -77,11 +76,11 @@ export default function FindWork() {
                         color: "rgb(115 129 155)",
                       }}
                     >
-                      <span>{job?.applications?.length} Proposals</span>
+                      {/* <span>{job?.applications?.length} Proposals</span>
                       <span>Payment Verified</span>
                       <span>*****</span>
                       <span>98,000 ETB Spent</span>
-                      <span>Addis Ababa</span>
+                      <span>Addis Ababa</span> */}
                     </div>
                   </CustomCard>
                 </Box>

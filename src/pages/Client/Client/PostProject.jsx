@@ -13,8 +13,11 @@ import {
   CustomTextField,
 } from "../../../components/CustomTextField";
 import { POST_PROJECT, POST_PROJECT_LOOKUPS } from "../../../graphql/job";
+import { useTranslation } from "react-i18next";
 
 export default function PostProject() {
+  const { t } = useTranslation();
+
   const navigate = useNavigate();
 
   const lookups = useQuery(POST_PROJECT_LOOKUPS);
@@ -37,7 +40,9 @@ export default function PostProject() {
       await createJob({ variables: { input: values } });
 
       reset();
-      toast.success("Your Project is Successfully Posted!", { autoClose: 500 });
+      toast.success(t("Your Project is Successfully Posted!"), {
+        autoClose: 500,
+      });
       navigate("/my-jobs");
     } catch (error) {
       toast.error(error.message, {
@@ -57,14 +62,7 @@ export default function PostProject() {
                 overflow: "auto",
               }}
             >
-              <CustomCard
-                title={"Post a Project"}
-                customStyle={{
-                  "&:hover": {
-                    background: "grey",
-                  },
-                }}
-              >
+              <CustomCard title={"Post a Project"}>
                 <div className=" mt-2">
                   <Divider />{" "}
                 </div>
@@ -86,90 +84,11 @@ export default function PostProject() {
                       lf={4}
                       tf={8}
                       control={control}
-                      name={"job_category_id"}
-                      label={"Category"}
+                      name={"skill_id"}
+                      label={"Skill"}
                       loading={lookups.loading}
-                      options={lookups.data?.jobCategories}
+                      options={lookups.data?.skills}
                     />
-                    {/* <CustomTextField
-                      lf={4}
-                      tf={8}
-                      control={control}
-                      name={"Sub Category"}
-                      label={"Sub Category"}
-                    /> */}
-                    {/* <CustomAutoComplete
-                      lf={4}
-                      tf={8}
-                      control={control}
-                      name={"skills"}
-                      label={"Skills"}
-                      loading={lookups.loading}
-                      multiple
-                      options={lookups.data?.skills?.map((s) => ({
-                        id: s.id,
-                        name: s.keyskill,
-                      }))}
-                    />
-                    <CustomTextField
-                      lf={4}
-                      tf={8}
-                      control={control}
-                      name={"Scope"}
-                      label={"Scope"}
-                      options={["Large", "Medium", "Small"]}
-                    />
-                    <CustomTextField
-                      lf={4}
-                      tf={8}
-                      control={control}
-                      name={"duration"}
-                      label={"Project Duration"}
-                    />{" "}
-                    <CustomTextField
-                      lf={4}
-                      tf={8}
-                      control={control}
-                      name={"Project Time"}
-                      label={"Project Time"}
-                      options={["1 Month", "3 Month", "6 Month"]}
-                    />
-                    <CustomTextField
-                      lf={4}
-                      tf={8}
-                      control={control}
-                      name={"Level"}
-                      label={"Level"}
-                      options={["Entry", "Intermediate", "Experts"]}
-                    />
-                    <CustomTextField
-                      lf={4}
-                      tf={8}
-                      control={control}
-                      name={"Budget"}
-                      label={"Maximum Budget"}
-                    />
-                    <CustomTextField
-                      lf={4}
-                      tf={8}
-                      control={control}
-                      name={"Title"}
-                      label={"Title"}
-                    />
-                    <CustomTextField
-                      lf={4}
-                      tf={8}
-                      control={control}
-                      name={"Link"}
-                      label={"Link"}
-                    />
-                    <CustomTextField
-                      lf={4}
-                      tf={8}
-                      control={control}
-                      name={"Attachment"}
-                      label={"Attachment"}
-                    /> */}
                     <CustomTextField
                       lf={4}
                       tf={8}
@@ -185,7 +104,7 @@ export default function PostProject() {
                         color="success"
                         type={loading ? "button" : "submit"}
                       >
-                        {loading ? "Loading..." : "Post a Job"}
+                        {t(loading ? "Loading..." : "Post a Job")}
                       </Button>
                     </div>{" "}
                   </form>
@@ -203,7 +122,7 @@ export default function PostProject() {
 const validator = yupResolver(
   Yup.object().shape({
     name: Yup.string().required(),
-    job_category_id: Yup.number().required(),
+    skill_id: Yup.number().required(),
     description: Yup.string().required(),
   })
 );

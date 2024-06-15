@@ -5,8 +5,11 @@ import CustomCard from "../../../components/CustomCard";
 import { MY_JOBS } from "../../../graphql/job";
 import { seeMore } from "../../../utils/misc";
 import { useNavigate } from "react-router";
+import { useTranslation } from "react-i18next";
 
 export default function MyJobs() {
+  const { t } = useTranslation();
+
   const navigate = useNavigate();
 
   const [application, setApplication] = useState([]);
@@ -33,13 +36,8 @@ export default function MyJobs() {
                   <CustomCard
                     title={job.name}
                     subTitle={new Date(job.createdAt).toLocaleString()}
-                    // customStyle={{
-                    //   "&:hover": {
-                    //     background: "grey",
-                    //   },
-                    // }}
                   >
-                    <div
+                    {/* <div
                       className="d-flex"
                       style={{
                         gap: "1rem",
@@ -49,7 +47,7 @@ export default function MyJobs() {
                     >
                       <span>Fixed Price</span> -<span>Intermediate</span> -
                       <span>Estimated Budget : 10000 ETB</span>
-                    </div>
+                    </div> */}
 
                     <div className="pt-3" style={{ height: "10rem" }}>
                       <p>
@@ -58,12 +56,10 @@ export default function MyJobs() {
                           : job.description}
                       </p>
                     </div>
-
                     <div className="d-flex" style={{ gap: ".5rem" }}>
-                      <Chip size="small" label={"MongoDB"} />
-                      <Chip size="small" label={"ExpressJS"} />
-                      <Chip size="small" label={"React"} />
-                      <Chip size="small" label={"Node.js"} />
+                      <Chip size="small" label={job?.skill?.name} />
+
+                      <span>{job?.applications?.length} Proposals</span>
                     </div>
 
                     <div
@@ -74,11 +70,11 @@ export default function MyJobs() {
                         color: "rgb(115 129 155)",
                       }}
                     >
-                      <span>{job?.applications?.length} Proposals</span>
-                      <span>Payment Verified</span>
+                      {/* <span>{job?.applications?.length} Proposals</span> */}
+                      {/* <span>Payment Verified</span>
                       <span>*****</span>
                       <span>98,000 ETB Spent</span>
-                      <span>Addis Ababa</span>
+                      <span>Addis Ababa</span> */}
                     </div>
 
                     <div className=" mt-2">
@@ -96,7 +92,7 @@ export default function MyJobs() {
                           });
                         }}
                       >
-                        View Applications
+                        {t("View Applications")}
                       </Button>
                     </div>
                   </CustomCard>
@@ -118,28 +114,28 @@ export default function MyJobs() {
                   <Stack direction={"row"}>
                     {" "}
                     <span style={{ fontWeight: "bold" }}>
-                      Frelancer Name :{" "}
+                      {t("Frelancer Name")} :{" "}
                     </span>{" "}
                     <span>{app?.freelancer?.fullname}</span>
                   </Stack>
                   <Stack direction={"row"}>
                     {" "}
                     <span style={{ fontWeight: "bold" }}>
-                      Frelancer Name :{" "}
+                      {t("Price Offer")} :{" "}
                     </span>{" "}
                     <span>{app.price_offer} ETB</span>
                   </Stack>
                   <Stack direction={"row"}>
                     {" "}
                     <span style={{ fontWeight: "bold" }}>
-                      Applied At :{" "}
+                      {t("Applied At")} :{" "}
                     </span>{" "}
                     <span>{new Date(app.createdAt).toLocaleString()} </span>
                   </Stack>
                   <Stack>
                     {" "}
                     <span style={{ fontWeight: "bold" }}>
-                      About Freelancer
+                      {t("Cover Letter")}
                     </span>{" "}
                     {/* <span>{app.about_freelancer}</span> */}
                   </Stack>
@@ -157,7 +153,7 @@ export default function MyJobs() {
                         });
                       }}
                     >
-                      Send Message
+                      {t("Send Message")}
                     </Button>
                   </div>
                 </Stack>

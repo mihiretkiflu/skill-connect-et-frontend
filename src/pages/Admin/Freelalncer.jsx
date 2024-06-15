@@ -26,7 +26,7 @@ export default function Freelancer() {
     },
     {
       field: "email",
-      headerName: "Email Address",
+      headerName: "Email",
       flex: 1,
     },
   ];

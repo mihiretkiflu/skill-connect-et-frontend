@@ -9,8 +9,11 @@ import * as Yup from "yup";
 import { CustomTextField } from "../../components/CustomTextField";
 import { LOGIN_USER } from "../../graphql/user";
 import { loginFinished } from "../../redux/slices/authSlice";
+import { useTranslation } from "react-i18next";
 
 export default function Login() {
+  const { t } = useTranslation();
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -33,8 +36,6 @@ export default function Login() {
 
       dispatch(loginFinished(data?.loginUser));
 
-      console.log(data?.loginUser);
-      // return;
       if (data?.loginUser?.user?.role === "admin") navigate("/admin");
       else navigate("/find-work");
     } catch (error) {
@@ -54,10 +55,10 @@ export default function Login() {
                 <div className="card-body">
                   <div className="pt-0 pb-2">
                     <h5 className="card-title text-center pb-0 fs-4">
-                      Login into an Account
+                      {t("Login into an Account")}
                     </h5>
                     <p className="text-center small">
-                      Enter your personal details to login account
+                      {t("Enter your personal details to login account")}
                     </p>
                   </div>
 
@@ -83,13 +84,13 @@ export default function Login() {
                         className="btn btn-primary w-100"
                         type={loading ? "button" : "submit"}
                       >
-                        {loading ? "Loading..." : "Login"}
+                        {t(loading ? "Loading..." : "Login")}
                       </button>
                     </div>
                     <div className="col-12">
                       <p className="small mb-0">
-                        Not sign up yet?
-                        <Link to={"/sign-up"}>Sign in</Link>
+                        {t("Not sign up yet?")}
+                        <Link to={"/sign-up"}>{t("Sign in")}</Link>
                       </p>
                     </div>
                   </form>

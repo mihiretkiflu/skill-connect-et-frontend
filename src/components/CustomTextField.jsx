@@ -1,6 +1,10 @@
 import { Autocomplete, MenuItem, TextField } from "@mui/material";
+import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
 import React from "react";
 import { Controller } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
 export function CustomTextField({
   label,
@@ -117,3 +121,100 @@ export function CustomAutoComplete({
     </div>
   );
 }
+
+export const CustomDateTimePicker = ({
+  label,
+  cg,
+  lg,
+  tg,
+  helperText,
+  options,
+  children,
+  value,
+  disabled,
+  // onChange,
+  noLabel,
+  small,
+  endAfterIcon,
+  startBeforeIcon,
+  name,
+  register,
+  setValue,
+  customStyle,
+
+  control,
+  tf,
+  ...otherProps
+}) => {
+  const { t } = useTranslation();
+
+  return (
+    <div className="d-flex mt-3">
+      <div style={{ flex: 12 || tf || 7 }} className="input-group">
+        <Controller
+          name={name}
+          control={control}
+          render={({ field, fieldState: { error } }) => {
+            const { value, onChange, ...other } = field;
+
+            return (
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DesktopDatePicker
+                  {...other}
+                  flex={1}
+                  label={label}
+                  disabled={disabled}
+                  inputFormat="DD/MM/YYYY"
+                  value={dayjs(value)}
+                  onChange={(newValue) => {
+                    onChange(dayjs(newValue).toDate());
+                  }}
+                  sx={{
+                    width: "100%",
+                    // "& .MuiFormControl-root": {
+                    //   width: "100%",
+                    //   ...customStyle,
+                    // },
+                    // "& .MuiOutlinedInput-input": {
+                    //   padding: small
+                    //     ? "6px 10px!important"
+                    //     : "8.5px 10px!important",
+                    // },
+                  }}
+                  // textFiel
+                  renderInput={(params) => (
+                    <TextField
+                      fullWidth
+                      error={!!error}
+                      label={label}
+                      // sx={
+                      //   {
+                      //     "& .MuiFormControl-root": { width: "100%" },
+                      //     "& .MuiOutlinedInput-input": {
+                      //       padding: small
+                      //         ? "6px 10px!important"
+                      //         : "8.5px 10px!important",
+                      //     },
+                      //   }
+                      // small
+                      //   ? {
+                      //       ...datePickerStyle,
+                      //       "& .MuiOutlinedInput-input": {
+                      //         padding: small && "8px 10px",
+                      //         fontSize: small && ".85rem",
+                      //       },
+                      //     }
+                      //   : { ...datePickerStyle })
+                      // }
+                      {...params}
+                    />
+                  )}
+                />
+              </LocalizationProvider>
+            );
+          }}
+        />
+      </div>
+    </div>
+  );
+};

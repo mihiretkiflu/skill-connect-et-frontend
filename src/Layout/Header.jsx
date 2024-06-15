@@ -4,8 +4,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { controlSidebar } from "../redux/slices/systemSlice";
 import { Chip } from "@mui/material";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function Header() {
+  const { t } = useTranslation();
+
   const dispatch = useDispatch();
   const { sidebar } = useSelector((state) => state.system);
   const { currentUser } = useSelector((state) => state.auth);
@@ -32,7 +35,7 @@ export default function Header() {
       <div className="d-flex align-items-center justify-content-between">
         <Link to="/admin" className="logo d-flex align-items-center">
           {/* <img src="assets/img/logo.png" alt="" /> */}
-          <span className="d-none d-lg-block">SkillConnect</span>
+          <span className="d-none d-lg-block">{t("Skill Connect")}</span>
         </Link>
         <i
           className="bi bi-list toggle-sidebar-btn"
@@ -86,7 +89,7 @@ export default function Header() {
               <li className="dropdown-header">
                 <h6> {currentUser?.firstname + " " + currentUser.lastname}</h6>
                 <span>
-                  <Chip color="success" label={currentUser?.role} />
+                  <Chip color="success" label={t(currentUser?.role)} />
                 </span>
               </li>
               <li>
@@ -99,7 +102,7 @@ export default function Header() {
                   href="users-profile.html"
                 >
                   <i className="bi bi-person"></i>
-                  <span>My Profile</span>
+                  <span>{t("My Profile")}</span>
                 </a>
               </li>
               <li>
@@ -112,7 +115,7 @@ export default function Header() {
                   href="users-profile.html"
                 >
                   <i className="bi bi-gear"></i>
-                  <span>Account Settings</span>
+                  <span>{t("Account Settings")}</span>
                 </a>
               </li>
               <li>
@@ -125,7 +128,7 @@ export default function Header() {
                   href="pages-faq.html"
                 >
                   <i className="bi bi-question-circle"></i>
-                  <span>Need Help?</span>
+                  <span>{t("Need Help?")}</span>
                 </a>
               </li>
               <li>
@@ -135,7 +138,7 @@ export default function Header() {
               <li>
                 <a className="dropdown-item d-flex align-items-center" href="#">
                   <i className="bi bi-box-arrow-right"></i>
-                  <span>Sign Out</span>
+                  <span>{t("Sign Out")}</span>
                 </a>
               </li>
             </ul>

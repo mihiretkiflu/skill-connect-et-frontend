@@ -3,8 +3,11 @@ import React from "react";
 import { useNavigate } from "react-router";
 import CustomCard from "../../../components/CustomCard";
 import RightSideView from "../Freelancer/RightSideView";
+import { useTranslation } from "react-i18next";
 
 export default function FindFreelancer() {
+  const { t } = useTranslation();
+
   const navigate = useNavigate();
 
   return (
@@ -70,11 +73,6 @@ export default function FindFreelancer() {
                   </div>
                 }
                 // subTitle={"Posted 2 hours ago"}
-                customStyle={{
-                  "&:hover": {
-                    background: "grey",
-                  },
-                }}
               >
                 <div
                   className="d-flex"

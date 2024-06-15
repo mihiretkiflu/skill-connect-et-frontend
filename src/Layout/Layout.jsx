@@ -2,8 +2,11 @@ import React from "react";
 import { Outlet } from "react-router";
 import Header from "./Header";
 import SideBar from "./SideBar";
+import { useTranslation } from "react-i18next";
 
 export default function Layout() {
+  const { t } = useTranslation();
+
   return (
     <>
       <Header />
@@ -11,13 +14,13 @@ export default function Layout() {
 
       <main id="main" className="main">
         <div className="pagetitle">
-          <h1>Dashboard</h1>
+          <h1>{t("Dashboard")}</h1>
           <nav>
             <ol className="breadcrumb">
               <li className="breadcrumb-item">
                 <a href="index.html">Home</a>
               </li>
-              <li className="breadcrumb-item active">Dashboard</li>
+              <li className="breadcrumb-item active">{t("Dashboard")}</li>
             </ol>
           </nav>
         </div>

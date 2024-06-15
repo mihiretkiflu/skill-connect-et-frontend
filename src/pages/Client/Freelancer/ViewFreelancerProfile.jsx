@@ -1,8 +1,11 @@
 import { Box, Button, Chip, Divider } from "@mui/material";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import CustomCard from "../../../components/CustomCard";
 
 export default function ViewFreelancerProfile() {
+  const { t } = useTranslation();
+
   return (
     <div className="p-2" style={{ height: "100%" }}>
       <div className="container" style={{ height: "100%" }}>
@@ -59,11 +62,6 @@ export default function ViewFreelancerProfile() {
                   </div>
                 }
                 // subTitle={"Posted 2 hours ago"}
-                customStyle={{
-                  "&:hover": {
-                    background: "grey",
-                  },
-                }}
               >
                 <div
                   className="d-flex"

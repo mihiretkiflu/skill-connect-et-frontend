@@ -14,7 +14,7 @@ import { APPLY_FOR_JOB } from "../../../graphql/job";
 import RightSideView from "./RightSideView";
 import { useTranslation } from "react-i18next";
 
-export default function WorkDetail() {
+export default function ContractDetail() {
   const { t } = useTranslation();
 
   const { currentUser } = useSelector((state) => state.auth);
@@ -40,15 +40,15 @@ export default function WorkDetail() {
       await applyToJob({
         variables: {
           input: {
-            employer_id: state?.job?.employer_id,
-            job_id: state?.job?.id,
+            employer_id: state?.contract?.employer_id,
+            job_id: state?.contract?.id,
             price_offer: parseFloat(values.price_offer || 0),
             ...values,
           },
         },
       });
 
-      toast.success(t("Job Successfully Applied !"), { autoClose: 500 });
+      toast.success("Job Successfully Applied !", { autoClose: 500 });
       // navigate("/my-applications");
       reset();
       setApply(false);
@@ -71,32 +71,38 @@ export default function WorkDetail() {
               }}
             >
               <CustomCard
-                title={state?.job?.name}
-                subTitle={new Date(state?.job?.createdAt).toLocaleString()}
+                title={state?.contract?.id}
+                subTitle={new Date(state?.contract?.createdAt).toLocaleString()}
               >
-                {/* <div className="mb-3">
-                  <Chip size="medium" label={"Front End Developer"} />
-                </div> */}
-                {/* <div
+                <div
                   className="d-flex"
-                  style={{ gap: "1rem", fontSize: ".8rem", color: "#899bbd" }}
+                  style={{
+                    gap: "1rem",
+                    fontSize: ".8rem",
+                    color: "#899bbd",
+                  }}
                 >
-                  <span>Fixed Price</span> -<span>Intermediate</span> -
-                  <span>Estimated Budget : 10000 ETB</span>
-                </div> */}
+                  <span>
+                    {t("Start Date")}: {state?.contract?.start_date}
+                  </span>{" "}
+                  -
+                  <span>
+                    {t("Deadline Date")} : {state?.contract?.deadline_date}
+                  </span>{" "}
+                  -
+                  <span>
+                    {t("Offered Budget")} : {state?.contract?.offered_amount}{" "}
+                    ETB
+                  </span>
+                </div>
 
                 <div className="pt-3">
-                  <p>{state?.job?.description}</p>
+                  <p>{state?.contract?.description}</p>
                 </div>
 
                 <div className="d-flex" style={{ gap: ".5rem" }}>
-                  <Chip size="small" label={state?.job?.skill?.name} />{" "}
-                  <span>
-                    {" "}
-                    {t("n Proposals", {
-                      count: state?.job?.applications?.length,
-                    })}
-                  </span>
+                  <Chip size="small" label={state?.contract?.skill?.name} />{" "}
+                  <span>{state?.contract?.applications?.length} Proposals</span>
                 </div>
 
                 <div
@@ -120,7 +126,7 @@ export default function WorkDetail() {
                 <div className="d-flex mt-3 justify-content-start">
                   {!apply && currentUser?.role === "freelance" && (
                     <Button variant="outlined" onClick={() => setApply(true)}>
-                      {t("View Application Detail")}
+                      View Application Detail
                     </Button>
                   )}
                 </div>
@@ -161,7 +167,7 @@ export default function WorkDetail() {
                             variant="outlined"
                             onClick={() => setApply(false)}
                           >
-                            {t("Hide Application Detail")}
+                            Hide Application Detail
                           </Button>
                         )}
 
@@ -172,7 +178,7 @@ export default function WorkDetail() {
                             color="success"
                             type={loading ? "button" : "submit"}
                           >
-                            {t(loading ? "Loading..." : "Apply")}
+                            {loading ? "Loading..." : "Apply"}
                           </Button>
                         )}
                       </div>{" "}

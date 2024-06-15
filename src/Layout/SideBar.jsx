@@ -6,22 +6,12 @@ export default function SideBar() {
     { label: "Dashboard", link: "/admin/dashboard", icon: "bi-grid-fill" },
     { label: "Clients", link: "/admin/clients", icon: "bi-people-fill" },
     {
-      label: "Freelancer",
+      label: "Freelancers",
       link: "/admin/freelancers",
       icon: "bi-person-workspace",
     },
     { label: "Jobs", link: "/admin/jobs", icon: "bi-journal-bookmark" },
 
-    {
-      label: "Job Category",
-      link: "/admin/job-category",
-      icon: "bi-list-nested",
-    },
-    {
-      label: "Job Sub Category",
-      link: "/admin/job-sub-category",
-      icon: "bi-list-nested",
-    },
     { label: "Skills", link: "/admin/Skills", icon: "bi-card-checklist" },
   ];
 

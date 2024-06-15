@@ -36,7 +36,7 @@ export default function AuthWrapper() {
 
   const wsLink = new GraphQLWsLink(
     createClient({
-      uri: "http://localhost:4000/graphql",
+      uri: "http://localhost:4000/subscriptions",
       connectionParams: {
         authorization: token ? `Bearer ${token}` : "",
       },

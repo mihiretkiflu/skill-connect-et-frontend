@@ -1,5 +1,11 @@
 import { gql } from "@apollo/client";
 
+export const GET_MESSAGES = gql`
+  query Query {
+    messages
+  }
+`;
+
 export const SEND_MESSAGE = gql`
   mutation SendMessage($input: MessageInput!) {
     sendMessage(input: $input) {

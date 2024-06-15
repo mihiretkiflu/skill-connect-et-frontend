@@ -11,7 +11,7 @@ export default function Jobs() {
     },
     {
       field: "firstname",
-      headerName: "Title",
+      headerName: "Headline",
       flex: 1,
     },
     {

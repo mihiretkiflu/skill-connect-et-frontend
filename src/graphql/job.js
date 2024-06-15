@@ -4,10 +4,6 @@ export const POST_PROJECT_LOOKUPS = gql`
   query AddJobLookups {
     skills {
       id
-      keyskill
-    }
-    jobCategories {
-      id
       name
     }
   }
@@ -29,7 +25,7 @@ export const JOBS = gql`
       description
       posted_date
       createdAt
-      jobCategory {
+      skill {
         name
       }
       applications {
@@ -58,7 +54,7 @@ export const MY_JOBS = gql`
       createdAt
       updatedAt
 
-      jobCategory {
+      skill {
         name
       }
       applications {

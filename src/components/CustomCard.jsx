@@ -9,7 +9,7 @@ export default function CustomCard({ title, subTitle, customStyle, children }) {
         height: "100%",
         // background: "blue",
         "&:hover": {
-          backgroundColor: "divider",
+          // backgroundColor: "smokewhite",
         },
         ...customStyle,
       }}

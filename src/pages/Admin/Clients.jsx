@@ -26,7 +26,7 @@ export default function Clients() {
     },
     {
       field: "email",
-      headerName: "Email Address",
+      headerName: "Email",
       flex: 1,
     },
   ];

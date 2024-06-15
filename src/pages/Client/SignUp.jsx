@@ -7,8 +7,11 @@ import { toast } from "react-toastify";
 import * as Yup from "yup";
 import { CustomTextField } from "../../components/CustomTextField";
 import { CREATE_USER } from "../../graphql/user";
+import { useTranslation } from "react-i18next";
 
 export default function SignUp() {
+  const { t } = useTranslation();
+
   const navigate = useNavigate();
 
   const [createUser, { loading }] = useMutation(CREATE_USER);
@@ -32,7 +35,7 @@ export default function SignUp() {
 
       navigate("/login");
 
-      toast.success("User Successfully Added!", { autoClose: 500 });
+      toast.success(t("User Successfully Added!"), { autoClose: 500 });
     } catch (error) {
       toast.error(error.message, {
         autoClose: 500,
@@ -50,10 +53,10 @@ export default function SignUp() {
                 <div className="card-body">
                   <div className="pt-0 pb-2">
                     <h5 className="card-title text-center pb-0 fs-4">
-                      Create an Account
+                      {t("Create an Account")}
                     </h5>
                     <p className="text-center small">
-                      Enter your personal details to create account
+                      {t("Enter your personal details to create account")}
                     </p>
                   </div>
 
@@ -105,13 +108,13 @@ export default function SignUp() {
                         className="btn btn-primary w-100"
                         type={loading ? "button" : "submit"}
                       >
-                        {loading ? "Loading..." : "Create Account"}
+                        {t(loading ? "Loading..." : "Create Account")}
                       </button>
                     </div>
                     <div className="col-12">
                       <p className="small mb-0">
-                        Already have an account?
-                        <Link to={"/login"}>Log in</Link>
+                        {t("Already have an account?")}
+                        <Link to={"/login"}>{t("Log in")}</Link>
                       </p>
                     </div>
                   </form>

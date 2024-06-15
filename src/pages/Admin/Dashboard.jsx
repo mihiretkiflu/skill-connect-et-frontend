@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 export default function Dashboard() {
   return (
@@ -14,7 +15,7 @@ export default function Dashboard() {
           </div>
           <div className="col-lg-3 col-md-6">
             <StatisticsCard
-              label={"Freelencer"}
+              label={"Freelencera"}
               icon={"bi-person"}
               value={20000}
             />
@@ -59,23 +60,25 @@ export default function Dashboard() {
 }
 
 function DataTable() {
+  const { t } = useTranslation();
+
   return (
     <div className="col-12">
       <div className="card recent-sales overflow-auto">
         <div className="card-body">
           <h5 className="card-title">
-            Recent Transactions
+            {t("Recent Transactions")}
             <span>| 23, 789, 123 ETB</span>
           </h5>
 
           <table className="table table-borderless datatable">
             <thead>
               <tr>
-                <th scope="col">Transaction #</th>
-                <th scope="col">From</th>
-                <th scope="col">To</th>
-                <th scope="col">Amount</th>
-                <th scope="col">Status</th>
+                <th scope="col">{t("Transaction #")}</th>
+                <th scope="col">{t("From")}</th>
+                <th scope="col">{t("To")}</th>
+                <th scope="col">{t("Amount")}</th>
+                <th scope="col">{t("Status")}</th>
               </tr>
             </thead>
             <tbody>

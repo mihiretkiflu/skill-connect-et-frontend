@@ -22,6 +22,11 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 
 const apolloClient = new ApolloClient({
   cache: new InMemoryCache(),
+  defaultOptions: {
+    watchQuery: {
+      fetchPolicy: "no-cache",
+    },
+  },
   link: createHttpLink({
     uri: "http://localhost:4000/graphql",
     credentials: "include",
@@ -46,9 +51,9 @@ root.render(
       <PersistGate persistor={persistor}>
         <ToastContainer theme="colored" />
         <BrowserRouter>
-          <ApolloProvider client={apolloClient}>
-            <App />
-          </ApolloProvider>
+          {/* <ApolloProvider client={apolloClient}> */}
+          <App />
+          {/* </ApolloProvider> */}
         </BrowserRouter>
       </PersistGate>
     </Provider>
