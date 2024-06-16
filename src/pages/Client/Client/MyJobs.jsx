@@ -1,11 +1,11 @@
 import { useQuery } from "@apollo/client";
 import { Box, Button, Chip, Divider, Skeleton, Stack } from "@mui/material";
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router";
 import CustomCard from "../../../components/CustomCard";
 import { MY_JOBS } from "../../../graphql/job";
 import { seeMore } from "../../../utils/misc";
-import { useNavigate } from "react-router";
-import { useTranslation } from "react-i18next";
 
 export default function MyJobs() {
   const { t } = useTranslation();
@@ -78,7 +78,7 @@ export default function MyJobs() {
                     </div>
 
                     <div className=" mt-2">
-                      <Divider />{" "}
+                      <Divider />
                     </div>
 
                     <div className="d-flex mt-3 justify-content-start">
@@ -112,31 +112,27 @@ export default function MyJobs() {
                   pb={1}
                 >
                   <Stack direction={"row"}>
-                    {" "}
                     <span style={{ fontWeight: "bold" }}>
-                      {t("Frelancer Name")} :{" "}
-                    </span>{" "}
+                      {t("Frelancer Name")} :
+                    </span>
                     <span>{app?.freelancer?.fullname}</span>
                   </Stack>
                   <Stack direction={"row"}>
-                    {" "}
                     <span style={{ fontWeight: "bold" }}>
-                      {t("Price Offer")} :{" "}
-                    </span>{" "}
+                      {t("Price Offer")} :
+                    </span>
                     <span>{app.price_offer} ETB</span>
                   </Stack>
                   <Stack direction={"row"}>
-                    {" "}
                     <span style={{ fontWeight: "bold" }}>
-                      {t("Applied At")} :{" "}
-                    </span>{" "}
+                      {t("Applied At")} :
+                    </span>
                     <span>{new Date(app.createdAt).toLocaleString()} </span>
                   </Stack>
                   <Stack>
-                    {" "}
                     <span style={{ fontWeight: "bold" }}>
                       {t("Cover Letter")}
-                    </span>{" "}
+                    </span>
                     {/* <span>{app.about_freelancer}</span> */}
                   </Stack>
 
@@ -159,7 +155,7 @@ export default function MyJobs() {
                 </Stack>
               ))}
             </CustomCard>
-          </div>{" "}
+          </div>
         </div>
       </div>
     </div>

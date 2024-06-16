@@ -22,14 +22,14 @@ export const NEW_MESSAGE_LISTENER = gql`
       seen
       createdAt
       updatedAt
-      sender {
-        id
-        fullname
-      }
-      receiver {
-        id
-        fullname
-      }
+      # sender {
+      #   id
+      #   fullname
+      # }
+      # receiver {
+      #   id
+      #   fullname
+      # }
     }
   }
 `;

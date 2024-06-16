@@ -1,8 +1,9 @@
 import { useMutation, useQuery, useSubscription } from "@apollo/client";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Avatar, CircularProgress } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useLocation } from "react-router";
 import { toast } from "react-toastify";
@@ -18,20 +19,30 @@ import {
   SEND_MESSAGE,
 } from "../../../graphql/message";
 import "./chat.css";
-import { useTranslation } from "react-i18next";
+
 export default function Chat() {
   const { t } = useTranslation();
 
   const { state } = useLocation();
 
   const [messages, setMessages] = useState([]);
-  const [selectedChats, setSelectedChats] = useState([]);
+  const [selectedChat, setSelectedChat] = useState({});
 
   const { data, loading, refetch } = useQuery(GET_MESSAGES);
+  const newMessage = useSubscription(NEW_MESSAGE_LISTENER);
 
   useEffect(() => {
     setMessages(data?.messages);
+    setSelectedChat(
+      data?.messages?.find(
+        (m) => m?.participant?.id === selectedChat?.participant?.id
+      )
+    );
   }, [data, loading]);
+
+  useEffect(() => {
+    refetch();
+  }, [newMessage.data, newMessage.loading]);
 
   return (
     <div className="container p-0" style={{ height: "100%" }}>
@@ -42,26 +53,26 @@ export default function Chat() {
           overflow: "hidden",
         }}
       >
-        <div className="row g-0" style={{ height: "100%" }}>
-          {/* Chat List */}
-
+        <div
+          className="row g-0"
+          style={{
+            height: "100%",
+          }}
+        >
           {loading ? (
             <div style={{ height: "100%", width: "100%" }}>
               <CircularProgress />
             </div>
           ) : (
             <>
-              {" "}
-              <LeftSide
-                messages={messages}
-                freelancer={state?.freelancer}
-                setSelectedChats={setSelectedChats}
-              />
+              <LeftSide messages={messages} setSelectedChat={setSelectedChat} />
               <RightSide
                 receiver={state?.freelancer}
                 job={state?.job}
                 application={state?.application}
-                messages={selectedChats}
+                message={selectedChat}
+                selectedChat={selectedChat}
+                refetch={refetch}
               />
             </>
           )}
@@ -71,7 +82,7 @@ export default function Chat() {
   );
 }
 
-function LeftSide({ freelancer, messages, setSelectedChats }) {
+function LeftSide({ messages, setSelectedChat }) {
   const { t } = useTranslation();
 
   return (
@@ -98,60 +109,42 @@ function LeftSide({ freelancer, messages, setSelectedChats }) {
         }}
       >
         {messages?.map((msg, i) => (
-          <button
+          <Button
             key={i}
-            onClick={setSelectedChats(msg)}
+            onClick={() => setSelectedChat(msg)}
             className="list-group-item list-group-item-action border-0 px-3"
-            style={{ cursor: "pointer" }}
+            sx={{
+              justifyContent: "flex-start",
+            }}
           >
-            <div className="badge bg-success float-right">0</div>
+            <div className="badge bg-success float-right">
+              {msg?.messages?.filter((m) => m.seen === false)?.length}
+            </div>
             <div className="d-flex align-items-start">
               <img
-                src="https://bootdey.com/img/Content/avatar/avatar5.png"
+                src={msg?.participant?.avatar}
                 className="rounded-circle mr-1 ml-1"
-                alt={freelancer?.fullname}
+                alt={msg?.participant?.fullname}
                 width="40"
                 height="40"
               />
               <div className="flex-grow-1 ml-3">
-                {msg.user_id}
+                {msg?.participant?.fullname}
                 <div className="small">
-                  <span className="fas fa-circle chat-online"></span> Online
+                  <span className="fas fa-circle chat-online"></span>{" "}
+                  {t("Online")} / {t("Offline")}
                 </div>
               </div>
             </div>
-          </button>
+          </Button>
         ))}
-        {freelancer && (
-          <a
-            href="#"
-            className="list-group-item list-group-item-action border-0"
-          >
-            <div className="badge bg-success float-right">5</div>
-            <div className="d-flex align-items-start">
-              <img
-                src="https://bootdey.com/img/Content/avatar/avatar5.png"
-                className="rounded-circle mr-1 ml-1"
-                alt={freelancer?.fullname}
-                width="40"
-                height="40"
-              />
-              <div className="flex-grow-1 ml-3">
-                {freelancer?.fullname}
-                <div className="small">
-                  <span className="fas fa-circle chat-online"></span> Online
-                </div>
-              </div>
-            </div>
-          </a>
-        )}
       </div>
       <hr className="d-block d-lg-none mt-1 mb-0" />
     </div>
   );
 }
 
-function RightSide({ receiver, job, application, messages }) {
+function RightSide({ job, refetch, selectedChat }) {
   const { t } = useTranslation();
 
   const { currentUser } = useSelector((state) => state.auth);
@@ -162,27 +155,45 @@ function RightSide({ receiver, job, application, messages }) {
   const [sendMessageMut, { loading }] = useMutation(SEND_MESSAGE);
   const [createContract, createContractMutation] = useMutation(CREATE_CONTRACT);
 
-  const newMessage = useSubscription(NEW_MESSAGE_LISTENER);
-
-  console.log({ newMessage: newMessage.data });
-
-  const { control, watch, trigger } = useForm({
+  const { control, watch, trigger, reset, setValue } = useForm({
     mode: "all",
     resolver: contract_validator,
+    defaultValues: {
+      message: "",
+    },
   });
 
+  const scrollToBottom = () => {
+    const messagesContainer = document.getElementById("chat-messages");
+    if (messagesContainer) {
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [selectedChat]);
+
   const sendMessage = async () => {
-    try {
-      await sendMessageMut({
-        variables: {
-          input: {
-            content: watch("message"),
-            receiver_id: receiver?.id,
+    if (watch("message")) {
+      try {
+        await sendMessageMut({
+          variables: {
+            input: {
+              content: watch("message"),
+              receiver_id: selectedChat?.participant?.id,
+            },
           },
-        },
-      });
-    } catch (error) {
-      toast.error(error.message);
+        });
+
+        refetch();
+
+        scrollToBottom();
+
+        setValue("message", "");
+      } catch (error) {
+        toast.error(error.message);
+      }
     }
   };
 
@@ -199,7 +210,7 @@ function RightSide({ receiver, job, application, messages }) {
           variables: {
             input: {
               job_id: job.id,
-              freelancer_id: receiver?.id,
+              freelancer_id: selectedChat?.participant?.id,
               offered_amount: parseFloat(watch("offered_amount")),
               start_date: watch("start_date"),
               deadline_date: watch("deadline_date"),
@@ -216,16 +227,23 @@ function RightSide({ receiver, job, application, messages }) {
     }
   };
 
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      sendMessage();
+    }
+  };
+
   return (
     <div className="col-12 col-lg-7 col-xl-9" style={{ height: "100%" }}>
-      {messages && (
+      {selectedChat?.participant && (
         <>
           <div className="py-2 px-4 border-bottom d-none d-lg-block">
             <div className="d-flex align-items-center py-1" styl>
               <>
                 <div className="position-relative">
                   <img
-                    src="https://bootdey.com/img/Content/avatar/avatar3.png"
+                    src={selectedChat?.participant?.avatar}
                     className="rounded-circle mr-1"
                     alt="Sharon Lessman"
                     width="40"
@@ -233,28 +251,12 @@ function RightSide({ receiver, job, application, messages }) {
                   />
                 </div>
                 <div className="flex-grow-1 pl-3">
-                  <strong>{messages?.user_id}</strong>
+                  <strong>{selectedChat?.participant?.fullname}</strong>
                   <div className="text-muted small">
                     <em>{t("online")}</em>
                   </div>
                 </div>
                 <div>
-                  {/* <button
-                    className="btn btn-primary btn-lg mr-1 px-3"
-                    onClick={startContract}
-                  >
-                    Start A Contract
-                  </button> */}
-
-                  {/* <button
-                    className="btn btn-secondary dropdown-toggle"
-                    type="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    Dropdown button
-                  </button> */}
-
                   <button
                     type="button"
                     className="btn btn-primary"
@@ -264,74 +266,7 @@ function RightSide({ receiver, job, application, messages }) {
                     {t("Start a Contract")}
                   </button>
 
-                  <div
-                    className="modal fade"
-                    id="staticBackdrop"
-                    data-bs-backdrop="static"
-                    data-bs-keyboard="false"
-                    tabIndex="-1"
-                    aria-labelledby="staticBackdropLabel"
-                    aria-hidden="true"
-                  >
-                    <div className="modal-dialog modal-dialog-centered">
-                      <div className="modal-content">
-                        <div className="modal-header">
-                          <h1
-                            className="modal-title fs-5"
-                            id="staticBackdropLabel"
-                          >
-                            {t("Create a Contract")}
-                          </h1>
-                          <button
-                            type="button"
-                            className="btn-close"
-                            data-bs-dismiss="modal"
-                            aria-label="Close"
-                          ></button>
-                        </div>
-                        <div className="modal-body">
-                          <form
-                            className="row g-3 needs-validation"
-                            // onSubmit={handleSubmit(onSubmit)}
-                          >
-                            <CustomTextField
-                              control={control}
-                              name={"offered_amount"}
-                              label={"Offered Amount"}
-                              type={"number"}
-                            />
-
-                            <CustomDateTimePicker
-                              control={control}
-                              name={"start_date"}
-                              label={"Start Date"}
-                            />
-                            <CustomDateTimePicker
-                              control={control}
-                              name={"deadline_date"}
-                              label={"Deadline Date"}
-                            />
-                          </form>
-                        </div>
-                        <div className="modal-footer">
-                          <button
-                            type="button"
-                            className="btn btn-secondary"
-                            data-bs-dismiss="modal"
-                          >
-                            {t("Close")}
-                          </button>
-                          <button
-                            type="button"
-                            className="btn btn-primary"
-                            onClick={startContract}
-                          >
-                            {t("Request Contract")}
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  {NewContractModal(t, control, startContract)}
                 </div>{" "}
               </>
             </div>
@@ -340,14 +275,23 @@ function RightSide({ receiver, job, application, messages }) {
             className="position-relative"
             style={{ height: "calc(100% - 8.5rem)" }}
           >
-            <div className="chat-messages p-4">
-              {messages?.messages?.map((msg, i) =>
+            <div
+              id="chat-messages"
+              className="chat-messages p-4"
+              style={{ overflowAnchor: "none", height: "100%" }}
+            >
+              {selectedChat?.messages?.map((msg, i) =>
                 msg?.sender_id === currentUser?.id ? (
-                  <RightSideMessage key={i} msg={msg} />
+                  <RightSideMessage key={i} msg={msg} owner={msg?.sender} />
                 ) : (
-                  <LeftSideMessage key={i} msg={msg} />
+                  <LeftSideMessage key={i} msg={msg} owner={msg?.sender} />
                 )
               )}
+
+              <div
+                id="anchor"
+                style={{ overflowAnchor: "auto", height: "1px" }}
+              ></div>
             </div>
           </div>
           <div className="flex-grow-0 py-3 px-4 border-top">
@@ -360,6 +304,7 @@ function RightSide({ receiver, job, application, messages }) {
                     <input
                       {...field}
                       type="text"
+                      onKeyDown={handleKeyDown}
                       className="form-control"
                       placeholder="Type your message"
                     />
@@ -384,27 +329,36 @@ function LeftSideMessage({ msg }) {
   return (
     <div className="chat-message-left pb-4">
       <div>
-        {/* <img
-          src="https://bootdey.com/img/Content/avatar/avatar3.png"
+        <img
+          src={msg?.sender?.avatar}
           className="rounded-circle mr-1"
           alt="Sharon Lessman"
           width="40"
           height="40"
-        /> */}
-        <Avatar>
+        />
+        {/* <Avatar>
           {currentUser.id === msg?.sender?.id
             ? msg?.sender?.fullname[0]
-            : msg?.receiver?.fullname[0]}
-        </Avatar>
-        <div className="text-muted small text-nowrap mt-2">
-          {new Date(msg?.createdAt).toLocaleTimeString()}
+            : msg?.sender?.fullname[0]}
+        </Avatar> */}
+        <div
+          className="text-muted small text-nowrap mt-2"
+          style={{ fontSize: ".7rem", textTransform: "lowercase" }}
+        >
+          {new Date(msg?.createdAt)
+            .toLocaleTimeString()
+            .split(" ")[0]
+            .substring(0, 5) +
+            " " +
+            new Date(msg?.createdAt).toLocaleTimeString().split(" ")[1]}
         </div>
       </div>
       <div className="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
         <div className="font-weight-bold mb-1">
-          {currentUser.id === msg?.sender?.id
+          {msg?.sender?.fullname}
+          {/* {currentUser.id === msg?.sender?.id
             ? msg?.sender?.fullname
-            : msg?.receiver?.fullname}
+            : msg?.receiver?.fullname} */}
         </div>
         {msg?.content}
       </div>
@@ -413,22 +367,100 @@ function LeftSideMessage({ msg }) {
 }
 
 function RightSideMessage({ msg }) {
+  const { currentUser } = useSelector((state) => state.auth);
+
   return (
     <div className="chat-message-right pb-4">
       <div>
         <img
-          src="https://bootdey.com/img/Content/avatar/avatar1.png"
+          src={currentUser?.avatar}
           className="rounded-circle mr-1"
           alt="Chris Wood"
           width="40"
           height="40"
         />
-        <div className="text-muted small text-nowrap mt-2">2:33 am</div>
+        <div
+          className="text-muted small text-nowrap mt-2"
+          style={{ fontSize: ".7rem", textTransform: "lowercase" }}
+        >
+          {new Date(msg?.createdAt)
+            .toLocaleTimeString()
+            .split(" ")[0]
+            .substring(0, 5) +
+            " " +
+            new Date(msg?.createdAt).toLocaleTimeString().split(" ")[1]}
+        </div>
       </div>
       <div className="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
         <div className="font-weight-bold mb-1">You</div>
-        Lorem ipsum dolor sit amet, vis erat denique in, dicunt prodesset te
-        vix.
+        {msg?.content}
+      </div>
+    </div>
+  );
+}
+
+function NewContractModal(t, control, startContract) {
+  return (
+    <div
+      className="modal fade"
+      id="staticBackdrop"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      tabIndex="-1"
+      aria-labelledby="staticBackdropLabel"
+      aria-hidden="true"
+    >
+      <div className="modal-dialog modal-dialog-centered">
+        <div className="modal-content">
+          <div className="modal-header">
+            <h1 className="modal-title fs-5" id="staticBackdropLabel">
+              {t("Create a Contract")}
+            </h1>
+            <button
+              type="button"
+              className="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div className="modal-body">
+            <form className="row g-3 needs-validation">
+              <CustomTextField
+                control={control}
+                name={"offered_amount"}
+                label={"Offered Amount"}
+                type={"number"}
+              />
+
+              <CustomDateTimePicker
+                control={control}
+                name={"start_date"}
+                label={"Start Date"}
+              />
+              <CustomDateTimePicker
+                control={control}
+                name={"deadline_date"}
+                label={"Deadline Date"}
+              />
+            </form>
+          </div>
+          <div className="modal-footer">
+            <button
+              type="button"
+              className="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              {t("Close")}
+            </button>
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={startContract}
+            >
+              {t("Request Contract")}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -5,14 +5,15 @@ import {
   createHttpLink,
   split,
 } from "@apollo/client";
-import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { getMainDefinition } from "@apollo/client/utilities";
-import { createClient } from "graphql-ws";
 import React from "react";
 import { useSelector } from "react-redux";
 import { Outlet } from "react-router";
 
-const apolloClient = new ApolloClient({
+import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
+import { createClient } from "graphql-ws";
+
+export const apolloClient = new ApolloClient({
   cache: new InMemoryCache(),
   link: createHttpLink({
     uri: "http://localhost:4000/graphql",
@@ -21,6 +22,12 @@ const apolloClient = new ApolloClient({
       authorization: token ? `Bearer ${token}` : "",
     }),
   }),
+  defaultOptions: {
+    watchQuery: {
+      fetchPolicy: "no-cache",
+    },
+  },
+  connectToDevTools: true,
 });
 
 export default function AuthWrapper() {
@@ -36,7 +43,7 @@ export default function AuthWrapper() {
 
   const wsLink = new GraphQLWsLink(
     createClient({
-      uri: "http://localhost:4000/subscriptions",
+      url: "ws://localhost:4000/graphql",
       connectionParams: {
         authorization: token ? `Bearer ${token}` : "",
       },
@@ -56,6 +63,12 @@ export default function AuthWrapper() {
   );
 
   apolloClient.setLink(splitLink);
+
+  const client = new ApolloClient({
+    link: splitLink,
+    cache: new InMemoryCache(),
+  });
+
   return (
     <ApolloProvider client={apolloClient}>
       <Outlet />

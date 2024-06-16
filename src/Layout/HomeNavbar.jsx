@@ -1,13 +1,12 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { useSubscription } from "@apollo/client";
 import { Avatar } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { CONTRACT_REQUESTED } from "../graphql/contract";
 import { logoutFinished } from "../redux/slices/authSlice";
-
 export default function HomeNavbar() {
   const { t } = useTranslation();
 
@@ -17,6 +16,10 @@ export default function HomeNavbar() {
   const { currentUser } = useSelector((state) => state.auth);
 
   const { data, loading } = useSubscription(CONTRACT_REQUESTED);
+
+  useEffect(() => {
+    console.log({ data });
+  }, [data, loading]);
 
   const navbars = [
     {
@@ -74,8 +77,6 @@ export default function HomeNavbar() {
     dispatch(logoutFinished());
     navigate("/");
   };
-
-  console.log({ data });
 
   return (
     <header id="header" className="fixed-top">
