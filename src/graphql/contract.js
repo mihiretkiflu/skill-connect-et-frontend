@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
-export const GET_CONTRACTS = gql`
-  query Contracts {
-    contracts {
+export const GET_EMPLOYER_CONTRACTS = gql`
+  query EmployerContracts {
+    employerContracts {
       id
       status
       start_date
@@ -11,18 +11,49 @@ export const GET_CONTRACTS = gql`
       final_amount
       createdAt
       updatedAt
-      # freelancer {
+      freelancer {
+        id
+        fullname
+      }
 
-      # }
-      # employer {
+      job {
+        id
+        description
+        name
+      }
+      payment {
+        id
+        amount
+        status
+        tx_ref
+        checkout_url
+        createdAt
+        updatedAt
+      }
+    }
+  }
+`;
 
-      # }
-      # job {
-
-      # }
-      # payment {
-
-      # }
+export const GET_MY_CONTRACTS = gql`
+  query FreelancerContracts {
+    freelancerContracts {
+      id
+      status
+      start_date
+      deadline_date
+      offered_amount
+      final_amount
+      createdAt
+      employer {
+        id
+        fullname
+        avatar
+      }
+      job {
+        id
+        name
+        description
+      }
     }
   }
 `;
@@ -65,6 +96,21 @@ export const CONTRACT_REQUESTED = gql`
       # payment {
 
       # }
+    }
+  }
+`;
+
+export const ACCEPT_REJECT_CONTRACT = gql`
+  mutation AcceptContract($input: AcceptContractInput) {
+    acceptContract(input: $input) {
+      id
+      status
+      start_date
+      deadline_date
+      offered_amount
+      final_amount
+      createdAt
+      updatedAt
     }
   }
 `;

@@ -21,8 +21,12 @@ import WorkDetail from "./pages/Client/Freelancer/WorkDetail";
 import Home from "./pages/Client/Home";
 import Login from "./pages/Client/Login";
 import SignUp from "./pages/Client/SignUp";
+import { useSelector } from "react-redux";
+import MyContracts from "./pages/Client/Client/MyContracts";
 
 function App() {
+  const { currentUser } = useSelector((state) => state.auth);
+
   return (
     <Routes>
       <Route element={<AuthWrapper />}>
@@ -43,7 +47,16 @@ function App() {
           <Route path="/create-profile" element={<CreateProfile />} />
           <Route path="/messages" element={<Chat />} />
           <Route path="/my-contracts">
-            <Route path="" element={<MyContractOffers />} />
+            <Route
+              path=""
+              element={
+                currentUser?.role === "freelance" ? (
+                  <MyContractOffers />
+                ) : (
+                  <MyContracts />
+                )
+              }
+            />
             <Route path=":id" element={<ContractDetail />} />
           </Route>
           <Route path="/my-jobs" element={<MyJobs />} />

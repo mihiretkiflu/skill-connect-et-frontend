@@ -1,4 +1,4 @@
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { Box, Button, Chip, Divider, Skeleton, Stack } from "@mui/material";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -6,6 +6,8 @@ import { useNavigate } from "react-router";
 import CustomCard from "../../../components/CustomCard";
 import { MY_JOBS } from "../../../graphql/job";
 import { seeMore } from "../../../utils/misc";
+import { SEND_MESSAGE } from "../../../graphql/message";
+import { toast } from "react-toastify";
 
 export default function MyJobs() {
   const { t } = useTranslation();
@@ -16,6 +18,32 @@ export default function MyJobs() {
   const [job, setJob] = useState({});
 
   const { loading, data } = useQuery(MY_JOBS);
+  const [sendMessageMut, { ...sendMessageMutation }] =
+    useMutation(SEND_MESSAGE);
+
+  const sendMessage = async (app) => {
+    try {
+      await sendMessageMut({
+        variables: {
+          input: {
+            content: "Interview Invitation for Role : " + job?.name,
+            receiver_id: app?.freelancer?.id,
+          },
+        },
+      });
+
+      navigate("/messages", {
+        state: {
+          freelancer: app.freelancer,
+          job: job,
+          application: app,
+        },
+      });
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
   return (
     <div className="p-2" style={{ height: "100%" }}>
       <div className="container" style={{ height: "100%" }}>
@@ -84,11 +112,12 @@ export default function MyJobs() {
                     <div className="d-flex mt-3 justify-content-start">
                       <Button
                         variant="outlined"
-                        onClick={() => {
+                        onClick={async () => {
                           setApplication(job?.applications);
                           setJob({
                             id: job?.id,
                             employer_id: job?.employer_id,
+                            name: job?.name,
                           });
                         }}
                       >
@@ -137,19 +166,8 @@ export default function MyJobs() {
                   </Stack>
 
                   <div className="d-flex mt-3 justify-content-start">
-                    <Button
-                      variant="outlined"
-                      onClick={() => {
-                        navigate("/messages", {
-                          state: {
-                            freelancer: app.freelancer,
-                            job: job,
-                            application: app,
-                          },
-                        });
-                      }}
-                    >
-                      {t("Send Message")}
+                    <Button variant="outlined" onClick={() => sendMessage(app)}>
+                      {t("Invite for Interview")}
                     </Button>
                   </div>
                 </Stack>

@@ -1,10 +1,12 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { useSubscription } from "@apollo/client";
 import { Avatar } from "@mui/material";
+import { changeLanguage } from "i18next";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, NavLink, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { CONTRACT_REQUESTED } from "../graphql/contract";
 import { logoutFinished } from "../redux/slices/authSlice";
 export default function HomeNavbar() {
@@ -18,7 +20,9 @@ export default function HomeNavbar() {
   const { data, loading } = useSubscription(CONTRACT_REQUESTED);
 
   useEffect(() => {
-    console.log({ data });
+    if (data?.contractRequested) {
+      toast.info(t("An Employer Requested a Contract !"));
+    }
   }, [data, loading]);
 
   const navbars = [
@@ -49,7 +53,8 @@ export default function HomeNavbar() {
     {
       label: "My Contracts",
       link: "/my-contracts",
-      hide: currentUser?.role !== "freelance",
+      // hide: currentUser?.role !== "freelance",
+      counter: data?.contractRequested,
     },
     {
       label: "My Jobs",
@@ -101,8 +106,14 @@ export default function HomeNavbar() {
                       }
                       to={navbar.link}
                     >
-                      {navbar.label}
+                      {t(navbar.label)}
                     </NavLink>
+
+                    {navbar?.counter && (
+                      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        1<span class="visually-hidden">unread messages</span>
+                      </span>
+                    )}
                   </li>
                 )
             )}
@@ -125,12 +136,50 @@ export default function HomeNavbar() {
                   data-bs-toggle="dropdown"
                   style={{ padding: "0px 0 0px 30px" }}
                 >
-                  {/* <img
-                    src="assets/img/profile-img.jpg"
-                    alt="Profile"
-                    className="rounded-circle"
-                    style={{ height: "3rem" }}
-                  /> */}
+                  <span className="d-none d-md-block dropdown-toggle ps-2">
+                    {t("Language")}
+                  </span>{" "}
+                </a>
+
+                <ul className="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+                  <li>
+                    <a
+                      className="dropdown-item d-flex align-items-center justify-content-start"
+                      href={"#"}
+                      onClick={() => {
+                        changeLanguage("en");
+                      }}
+                    >
+                      <span>{t("English")}</span>
+                    </a>
+                  </li>
+                  <li>
+                    <hr className="dropdown-divider" />
+                  </li>
+                  <li>
+                    <a
+                      className="dropdown-item d-flex align-items-center justify-content-start"
+                      href={"#"}
+                      onClick={() => {
+                        changeLanguage("am");
+                      }}
+                    >
+                      <span>{t("አማርኛ")}</span>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+            )}
+          </ul>
+          <ul>
+            {currentUser?.id && (
+              <li className="nav-item dropdown pe-3">
+                <a
+                  className="nav-link nav-profile d-flex align-items-center pe-0"
+                  href="#"
+                  data-bs-toggle="dropdown"
+                  style={{ padding: "0px 0 0px 30px" }}
+                >
                   <Avatar></Avatar>
                   <span className="d-none d-md-block dropdown-toggle ps-2">
                     {currentUser.firstname}{" "}

@@ -26,6 +26,7 @@ export default function Chat() {
   const { state } = useLocation();
 
   const [messages, setMessages] = useState([]);
+  const [message, setMessage] = useState(null);
   const [selectedChat, setSelectedChat] = useState({});
 
   const { data, loading, refetch } = useQuery(GET_MESSAGES);
@@ -43,6 +44,30 @@ export default function Chat() {
   useEffect(() => {
     refetch();
   }, [newMessage.data, newMessage.loading]);
+
+  useEffect(() => {
+    if (state?.freelancer) {
+      const messageSign = {
+        participant: {
+          ...state?.freelancer,
+          fullname:
+            state?.freelancer?.firstname + " " + state?.freelancer?.lastname,
+        },
+        messages: [],
+      };
+
+      const msg = messages.find(
+        (m) => m?.participant?.id === state?.freelancer?.id
+      );
+
+      if (msg) {
+        setSelectedChat(msg);
+      } else {
+        setMessage(messageSign);
+        setSelectedChat(messageSign);
+      }
+    }
+  }, [state]);
 
   return (
     <div className="container p-0" style={{ height: "100%" }}>
@@ -65,12 +90,14 @@ export default function Chat() {
             </div>
           ) : (
             <>
-              <LeftSide messages={messages} setSelectedChat={setSelectedChat} />
+              <LeftSide
+                message={message}
+                messages={messages}
+                setSelectedChat={setSelectedChat}
+              />
               <RightSide
-                receiver={state?.freelancer}
+                message={message}
                 job={state?.job}
-                application={state?.application}
-                message={selectedChat}
                 selectedChat={selectedChat}
                 refetch={refetch}
               />
@@ -82,8 +109,14 @@ export default function Chat() {
   );
 }
 
-function LeftSide({ messages, setSelectedChat }) {
+function LeftSide({ message, messages, setSelectedChat }) {
   const { t } = useTranslation();
+
+  useEffect(() => {
+    if (message?.messages) {
+      setSelectedChat(message);
+    }
+  }, [message]);
 
   return (
     <div
@@ -144,8 +177,11 @@ function LeftSide({ messages, setSelectedChat }) {
   );
 }
 
-function RightSide({ job, refetch, selectedChat }) {
+function RightSide({ job, refetch, selectedChat, message }) {
   const { t } = useTranslation();
+  const { state } = useLocation();
+
+  console.log({ state });
 
   const { currentUser } = useSelector((state) => state.auth);
 
@@ -181,7 +217,9 @@ function RightSide({ job, refetch, selectedChat }) {
           variables: {
             input: {
               content: watch("message"),
-              receiver_id: selectedChat?.participant?.id,
+              receiver_id: message?.participant
+                ? message?.participant?.id
+                : selectedChat?.participant?.id,
             },
           },
         });
@@ -257,17 +295,24 @@ function RightSide({ job, refetch, selectedChat }) {
                   </div>
                 </div>
                 <div>
-                  <button
-                    type="button"
-                    className="btn btn-primary"
-                    data-bs-toggle="modal"
-                    data-bs-target="#staticBackdrop"
-                  >
-                    {t("Start a Contract")}
-                  </button>
+                  {currentUser?.role === "employer" && (
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      data-bs-toggle="modal"
+                      data-bs-target="#staticBackdrop"
+                      disabled={!state?.job?.id}
+                    >
+                      {t("Start a Contract")}
+                    </button>
+                  )}
 
-                  {NewContractModal(t, control, startContract)}
-                </div>{" "}
+                  <NewContractModal
+                    t={t}
+                    control={control}
+                    startContract={startContract}
+                  />
+                </div>
               </>
             </div>
           </div>
@@ -399,7 +444,7 @@ function RightSideMessage({ msg }) {
   );
 }
 
-function NewContractModal(t, control, startContract) {
+function NewContractModal({ t, control, startContract }) {
   return (
     <div
       className="modal fade"

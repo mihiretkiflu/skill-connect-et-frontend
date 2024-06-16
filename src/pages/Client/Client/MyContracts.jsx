@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@apollo/client";
-import { Box, Button, ButtonGroup, Skeleton } from "@mui/material";
+import { Box, Button, ButtonGroup, Chip, Skeleton } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
@@ -7,12 +7,12 @@ import { toast } from "react-toastify";
 import CustomCard from "../../../components/CustomCard";
 import {
   ACCEPT_REJECT_CONTRACT,
-  GET_MY_CONTRACTS,
+  GET_EMPLOYER_CONTRACTS,
 } from "../../../graphql/contract";
 import { seeMore } from "../../../utils/misc";
-import RightSideView from "./RightSideView";
+import RightSideView from "../Freelancer/RightSideView";
 
-export default function MyContractOffers() {
+export default function MyContracts() {
   const { t } = useTranslation();
 
   const navigate = useNavigate();
@@ -20,17 +20,17 @@ export default function MyContractOffers() {
   const [contracts, setContracts] = useState([]);
   const [filter, setFilter] = useState("Pending Acceptance");
 
-  const { data, loading, refetch } = useQuery(GET_MY_CONTRACTS);
+  const { data, loading, refetch } = useQuery(GET_EMPLOYER_CONTRACTS);
   const [acceptRejectContract, acceptRejectContractMut] = useMutation(
     ACCEPT_REJECT_CONTRACT
   );
 
   useEffect(() => {
     if (filter === "all") {
-      setContracts(data?.freelancerContracts);
+      setContracts(data?.employerContracts);
     } else {
       setContracts(
-        data?.freelancerContracts?.filter((fc) => fc?.status === filter)
+        data?.employerContracts?.filter((fc) => fc?.status === filter)
       );
     }
   }, [filter, data, loading]);
@@ -158,21 +158,22 @@ export default function MyContractOffers() {
                           : contract?.job.description}
                       </p>
                     </div>
-
-                    {contract?.status === "Pending Acceptance" && (
+                    {contract?.status === "Pending Payment" ? (
                       <div className="d-flex" style={{ gap: ".5rem" }}>
                         <Button
-                          onClick={() => contractResponse(contract?.id, true)}
+                          onClick={() => {
+                            window.open(
+                              contract?.payment?.checkout_url,
+                              "_blank",
+                              "rel=noopener noreferrer"
+                            );
+                          }}
                         >
-                          {t("Accept Contract")}
-                        </Button>
-                        <Button
-                          onClick={() => contractResponse(contract?.id, false)}
-                          color="error"
-                        >
-                          {t("Reject Contract")}
+                          {t("Pay to Put on Escrow")}
                         </Button>
                       </div>
+                    ) : (
+                      <Chip label={t(contract?.status)} color="info" />
                     )}
 
                     <div

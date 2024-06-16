@@ -18,6 +18,8 @@ export function CustomTextField({
   multiline,
   ...props
 }) {
+  const { t } = useTranslation();
+
   return (
     <div className="d-flex mt-3">
       <div style={{ flex: 12 || tf || 7 }} className="input-group">
@@ -29,7 +31,7 @@ export function CustomTextField({
               <TextField
                 {...props}
                 {...field}
-                label={label}
+                label={t(label)}
                 variant="outlined"
                 fullWidth
                 select={select || options}
@@ -68,6 +70,8 @@ export function CustomAutoComplete({
   loading,
   ...props
 }) {
+  const { t } = useTranslation();
+
   return (
     <div className="d-flex mt-3">
       <div style={{ flex: 12 || tf || 7 }} className="input-group">
@@ -106,7 +110,7 @@ export function CustomAutoComplete({
                 renderInput={(params) => (
                   <TextField
                     {...params}
-                    label={label}
+                    label={t(label)}
                     placeholder={placeholder}
                     error={error}
                     fullWidth
@@ -186,7 +190,7 @@ export const CustomDateTimePicker = ({
                     <TextField
                       fullWidth
                       error={!!error}
-                      label={label}
+                      label={t(label)}
                       // sx={
                       //   {
                       //     "& .MuiFormControl-root": { width: "100%" },
