@@ -104,9 +104,15 @@ export default function Login() {
   );
 }
 
+const strongPasswordRegex =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/;
+
 const validator = yupResolver(
   Yup.object().shape({
-    email: Yup.string().required(),
-    password: Yup.string().required("Required"),
+    email: Yup.string().email().required(),
+    // password: Yup.string()
+    //   .required("Required")
+    //   .min(6)
+    //   .matches(strongPasswordRegex, "Use strong passowrd"),
   })
 );

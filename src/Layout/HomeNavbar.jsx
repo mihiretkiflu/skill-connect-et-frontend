@@ -7,7 +7,11 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { CONTRACT_REQUESTED } from "../graphql/contract";
+import {
+  CONTRACT_ACCEPTED,
+  CONTRACT_REQUESTED,
+  CONTRACT_STARTED,
+} from "../graphql/contract";
 import { logoutFinished } from "../redux/slices/authSlice";
 export default function HomeNavbar() {
   const { t } = useTranslation();
@@ -17,13 +21,21 @@ export default function HomeNavbar() {
 
   const { currentUser } = useSelector((state) => state.auth);
 
-  const { data, loading } = useSubscription(CONTRACT_REQUESTED);
+  const contractRequested = useSubscription(CONTRACT_REQUESTED);
+  const contractAccepted = useSubscription(CONTRACT_ACCEPTED);
+  const contractStarted = useSubscription(CONTRACT_STARTED);
 
   useEffect(() => {
-    if (data?.contractRequested) {
-      toast.info(t("An Employer Requested a Contract !"));
-    }
-  }, [data, loading]);
+    if (contractRequested.data) toast.info("You have new Contract Request !");
+  }, [contractRequested.data, contractRequested.loading]);
+
+  useEffect(() => {
+    if (contractAccepted.data) toast.info("You have new Contract Accepted !");
+  }, [contractAccepted.data, contractAccepted.loading]);
+
+  useEffect(() => {
+    if (contractStarted.data) toast.info("You have new Contract Started !");
+  }, [contractStarted.data, contractStarted.loading]);
 
   const navbars = [
     {
@@ -40,11 +52,7 @@ export default function HomeNavbar() {
       link: "/find-freelancer",
       hide: currentUser?.role === "freelance",
     },
-    {
-      label: "My Projects",
-      link: "/my-projects",
-      hide: currentUser?.role !== "freelance",
-    },
+
     {
       label: "Messages",
       link: "/messages",
@@ -53,8 +61,8 @@ export default function HomeNavbar() {
     {
       label: "My Contracts",
       link: "/my-contracts",
-      // hide: currentUser?.role !== "freelance",
-      counter: data?.contractRequested,
+      hide: !currentUser?.role,
+      counter: contractRequested?.data?.contractRequested,
     },
     {
       label: "My Jobs",
@@ -127,51 +135,49 @@ export default function HomeNavbar() {
             )}
           </ul>
 
+          <ul></ul>
           <ul>
-            {currentUser?.id && (
-              <li className="nav-item dropdown pe-3">
-                <a
-                  className="nav-link nav-profile d-flex align-items-center pe-0"
-                  href="#"
-                  data-bs-toggle="dropdown"
-                  style={{ padding: "0px 0 0px 30px" }}
-                >
-                  <span className="d-none d-md-block dropdown-toggle ps-2">
-                    {t("Language")}
-                  </span>{" "}
-                </a>
+            {" "}
+            <li className="nav-item dropdown pe-3">
+              <a
+                className="nav-link nav-profile d-flex align-items-center pe-0"
+                href="#"
+                data-bs-toggle="dropdown"
+                style={{ padding: "0px 0 0px 30px" }}
+              >
+                <span className="d-none d-md-block dropdown-toggle ps-2">
+                  {t("Language")}
+                </span>{" "}
+              </a>
 
-                <ul className="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
-                  <li>
-                    <a
-                      className="dropdown-item d-flex align-items-center justify-content-start"
-                      href={"#"}
-                      onClick={() => {
-                        changeLanguage("en");
-                      }}
-                    >
-                      <span>{t("English")}</span>
-                    </a>
-                  </li>
-                  <li>
-                    <hr className="dropdown-divider" />
-                  </li>
-                  <li>
-                    <a
-                      className="dropdown-item d-flex align-items-center justify-content-start"
-                      href={"#"}
-                      onClick={() => {
-                        changeLanguage("am");
-                      }}
-                    >
-                      <span>{t("አማርኛ")}</span>
-                    </a>
-                  </li>
-                </ul>
-              </li>
-            )}
-          </ul>
-          <ul>
+              <ul className="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+                <li>
+                  <a
+                    className="dropdown-item d-flex align-items-center justify-content-start"
+                    href={"#"}
+                    onClick={() => {
+                      changeLanguage("en");
+                    }}
+                  >
+                    <span>{t("English")}</span>
+                  </a>
+                </li>
+                <li>
+                  <hr className="dropdown-divider" />
+                </li>
+                <li>
+                  <a
+                    className="dropdown-item d-flex align-items-center justify-content-start"
+                    href={"#"}
+                    onClick={() => {
+                      changeLanguage("am");
+                    }}
+                  >
+                    <span>{t("አማርኛ")}</span>
+                  </a>
+                </li>
+              </ul>
+            </li>
             {currentUser?.id && (
               <li className="nav-item dropdown pe-3">
                 <a
@@ -237,6 +243,7 @@ export default function HomeNavbar() {
               </li>
             )}
           </ul>
+
           <i className="bi bi-list mobile-nav-toggle"></i>
         </nav>
       </div>

@@ -1,8 +1,12 @@
+import { useQuery } from "@apollo/client";
 import { Box } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import React from "react";
+import { FRELELANCERS } from "../../graphql/admin";
 
 export default function Freelancer() {
+  const { data, loading } = useQuery(FRELELANCERS);
+
   const columns = [
     {
       field: "id",
@@ -32,7 +36,7 @@ export default function Freelancer() {
   ];
   return (
     <Box height={"100%"}>
-      <DataGrid columns={columns} rows={[]} />
+      <DataGrid columns={columns} rows={data?.users || []} loading={loading} />
     </Box>
   );
 }

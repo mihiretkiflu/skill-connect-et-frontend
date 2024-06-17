@@ -38,6 +38,7 @@ export function CustomTextField({
                 multiline={multiline || rows}
                 rows={rows}
                 error={error}
+                helperText={error?.message}
               >
                 {options?.map((option) => (
                   <MenuItem
@@ -113,6 +114,7 @@ export function CustomAutoComplete({
                     label={t(label)}
                     placeholder={placeholder}
                     error={error}
+                    helperText={error?.message}
                     fullWidth
                     inputRef={ref}
                   />
@@ -190,6 +192,7 @@ export const CustomDateTimePicker = ({
                     <TextField
                       fullWidth
                       error={!!error}
+                      helperText={error?.message}
                       label={t(label)}
                       // sx={
                       //   {

@@ -16,7 +16,7 @@ import { createClient } from "graphql-ws";
 export const apolloClient = new ApolloClient({
   cache: new InMemoryCache(),
   link: createHttpLink({
-    uri: "http://localhost:4000/graphql",
+    uri: "http://192.168.4.56:4000/graphql",
     credentials: "include",
     headers: (token) => ({
       authorization: token ? `Bearer ${token}` : "",
@@ -34,7 +34,7 @@ export default function AuthWrapper() {
   const { token } = useSelector((state) => state.auth);
 
   const httpLink = createHttpLink({
-    uri: "http://localhost:4000/graphql",
+    uri: "http://192.168.4.56:4000/graphql",
     credentials: "include",
     headers: {
       authorization: token ? `Bearer ${token}` : "",
@@ -43,7 +43,7 @@ export default function AuthWrapper() {
 
   const wsLink = new GraphQLWsLink(
     createClient({
-      url: "ws://localhost:4000/graphql",
+      url: "ws://192.168.4.56:4000/subscription",
       connectionParams: {
         authorization: token ? `Bearer ${token}` : "",
       },

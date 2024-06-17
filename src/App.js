@@ -23,6 +23,8 @@ import Login from "./pages/Client/Login";
 import SignUp from "./pages/Client/SignUp";
 import { useSelector } from "react-redux";
 import MyContracts from "./pages/Client/Client/MyContracts";
+import MyProfile from "./pages/Client/MyProfile";
+import PaymentSuccess from "./pages/Client/PaymentSuccess";
 
 function App() {
   const { currentUser } = useSelector((state) => state.auth);
@@ -30,10 +32,12 @@ function App() {
   return (
     <Routes>
       <Route element={<AuthWrapper />}>
+        {" "}
         <Route path="/" element={<HomeLayout />}>
           <Route path="" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/sign-up" element={<SignUp />} />
+          <Route path="/my-profile" element={<MyProfile />} />
 
           <Route path="/find-work">
             <Route path="" element={<FindWork />} />
@@ -71,6 +75,7 @@ function App() {
           <Route path="job-sub-category" element={<Dashboard />} />
           <Route path="Skills" element={<Skills />} />
         </Route>
+        <Route path="/payment-success/:tx_no" element={<PaymentSuccess />} />
       </Route>
     </Routes>
   );

@@ -1,7 +1,11 @@
+import { useQuery } from "@apollo/client";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { DASHBOARD_STATS } from "../../graphql/admin";
 
 export default function Dashboard() {
+  const { data, loading } = useQuery(DASHBOARD_STATS);
+
   return (
     <div className="row">
       <div className="col-lg-12">
@@ -10,56 +14,63 @@ export default function Dashboard() {
             <StatisticsCard
               label={"Clients"}
               icon={"bi-person"}
-              value={20000}
+              value={loading ? "-" : data?.dashboardStats?.clientsCount}
             />
           </div>
           <div className="col-lg-3 col-md-6">
             <StatisticsCard
               label={"Freelencera"}
               icon={"bi-person"}
-              value={20000}
+              value={loading ? "-" : data?.dashboardStats?.freelancersCount}
             />
           </div>
           <div className="col-lg-3 col-md-6">
-            <StatisticsCard label={"Jobs"} icon={"bi-person"} value={20000} />
+            <StatisticsCard
+              label={"Jobs"}
+              icon={"bi-person"}
+              value={loading ? "-" : data?.dashboardStats?.jobsCount}
+            />
           </div>
           <div className="col-lg-3 col-md-6">
             <StatisticsCard
               label={"Contracts"}
               icon={"bi-person"}
-              value={20000}
+              value={loading ? "-" : data?.dashboardStats?.contractsCount}
             />
           </div>
           <div className="col-lg-4 col-md-6">
             <StatisticsCard
               label={"Applications"}
               icon={"bi-person"}
-              value={20000}
+              value={loading ? "-" : data?.dashboardStats?.applicationsCount}
             />
           </div>
           <div className="col-lg-4 col-md-6">
             <StatisticsCard
               label={"Transactions"}
               icon={"bi-person"}
-              value={20000}
+              value={loading ? "-" : data?.dashboardStats?.transactionsCount}
             />
           </div>
           <div className="col-lg-4 col-md-6">
             <StatisticsCard
               label={"Transactions"}
               icon={"bi-person"}
-              value={20000}
+              value={loading ? "-" : data?.dashboardStats?.transactionsCount}
             />
           </div>
 
-          <DataTable />
+          <DataTable
+            loading={loading}
+            recentTransactions={data?.dashboardStats?.recentTransactions}
+          />
         </div>
       </div>
     </div>
   );
 }
 
-function DataTable() {
+function DataTable({ loading, recentTransactions }) {
   const { t } = useTranslation();
 
   return (
@@ -82,81 +93,24 @@ function DataTable() {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <th scope="row">
-                  <a href="#">#2457</a>
-                </th>
-                <td>Brandon Jacob</td>
-                <td>
-                  <a href="#" className="text-primary">
-                    At praesentium minu
-                  </a>
-                </td>
-                <td>$64</td>
-                <td>
-                  <span className="badge bg-success">Approved</span>
-                </td>
-              </tr>
-              <tr>
-                <th scope="row">
-                  <a href="#">#2147</a>
-                </th>
-                <td>Bridie Kessler</td>
-                <td>
-                  <a href="#" className="text-primary">
-                    Blanditiis dolor omnis similique
-                  </a>
-                </td>
-                <td>$47</td>
-                <td>
-                  <span className="badge bg-warning">Pending</span>
-                </td>
-              </tr>
-              <tr>
-                <th scope="row">
-                  <a href="#">#2049</a>
-                </th>
-                <td>Ashleigh Langosh</td>
-                <td>
-                  <a href="#" className="text-primary">
-                    At recusandae consectetur
-                  </a>
-                </td>
-                <td>$147</td>
-                <td>
-                  <span className="badge bg-success">Approved</span>
-                </td>
-              </tr>
-              <tr>
-                <th scope="row">
-                  <a href="#">#2644</a>
-                </th>
-                <td>Angus Grady</td>
-                <td>
-                  <a href="#" className="text-primar">
-                    Ut voluptatem id earum et
-                  </a>
-                </td>
-                <td>$67</td>
-                <td>
-                  <span className="badge bg-danger">Rejected</span>
-                </td>
-              </tr>
-              <tr>
-                <th scope="row">
-                  <a href="#">#2644</a>
-                </th>
-                <td>Raheem Lehner</td>
-                <td>
-                  <a href="#" className="text-primary">
-                    Sunt similique distinctio
-                  </a>
-                </td>
-                <td>$165</td>
-                <td>
-                  <span className="badge bg-success">Approved</span>
-                </td>
-              </tr>
+              {loading ? (
+                <></>
+              ) : (
+                recentTransactions?.map((tx) => (
+                  <tr>
+                    <th scope="row">
+                      <a href="#">{tx.id}</a>
+                    </th>
+                    <td>{tx?.from}</td>
+                    <td>{tx?.to}</td>
+
+                    <td>{tx.amount} ETB</td>
+                    <td>
+                      <span className="badge bg-success">{tx.status}</span>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

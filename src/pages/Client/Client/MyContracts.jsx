@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery, useSubscription } from "@apollo/client";
 import { Box, Button, ButtonGroup, Chip, Skeleton } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -6,7 +6,11 @@ import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import CustomCard from "../../../components/CustomCard";
 import {
-  ACCEPT_REJECT_CONTRACT,
+  APPROVE_RELEASE_FUND,
+  CONFIRM_PAYMENT,
+  CONTRACT_ACCEPTED,
+  CONTRACT_REQUESTED,
+  CONTRACT_STARTED,
   GET_EMPLOYER_CONTRACTS,
 } from "../../../graphql/contract";
 import { seeMore } from "../../../utils/misc";
@@ -21,9 +25,13 @@ export default function MyContracts() {
   const [filter, setFilter] = useState("Pending Acceptance");
 
   const { data, loading, refetch } = useQuery(GET_EMPLOYER_CONTRACTS);
-  const [acceptRejectContract, acceptRejectContractMut] = useMutation(
-    ACCEPT_REJECT_CONTRACT
-  );
+  const [confirmPaymnt, confirmPaymntMut] = useMutation(CONFIRM_PAYMENT);
+  const [approveReleaseFnd, approveReleaseFndMut] =
+    useMutation(APPROVE_RELEASE_FUND);
+
+  const contractRequested = useSubscription(CONTRACT_REQUESTED);
+  const contractAccepted = useSubscription(CONTRACT_ACCEPTED);
+  const contractStarted = useSubscription(CONTRACT_STARTED);
 
   useEffect(() => {
     if (filter === "all") {
@@ -35,26 +43,58 @@ export default function MyContracts() {
     }
   }, [filter, data, loading]);
 
-  const contractResponse = async (contract_id, accepted) => {
+  const confirmPayment = async (payment) => {
     try {
-      await acceptRejectContract({
+      await confirmPaymnt({
         variables: {
           input: {
-            contract_id,
-            accepted,
+            payment_id: payment?.id,
+            paid: true,
           },
         },
       });
 
       refetch();
 
-      toast.success(
-        t("Contract Successfully " + (accepted ? "accepted" : "rejected")) + "!"
-      );
+      toast.success(t("Payment Successfully Confirmed !"));
     } catch (error) {
       toast.error(error.message);
     }
   };
+
+  const approveReleaseFund = async (contract_id) => {
+    try {
+      await approveReleaseFnd({
+        variables: {
+          input: {
+            contract_id,
+            status: true,
+          },
+        },
+      });
+
+      refetch();
+
+      toast.success(t("Payment Successfully Confirmed !"));
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  useEffect(() => {
+    if (contractRequested.data) toast.info("You have new Contract Request !");
+    refetch();
+  }, [contractRequested.data, contractRequested.loading]);
+
+  useEffect(() => {
+    if (contractAccepted.data) toast.info("You have new Contract Accepted !");
+    refetch();
+  }, [contractAccepted.data, contractAccepted.loading]);
+
+  useEffect(() => {
+    if (contractStarted.data) toast.info("You have new Contract Started !");
+    refetch();
+  }, [contractStarted.data, contractStarted.loading]);
 
   return (
     <div className="p-2" style={{ height: "100%" }}>
@@ -88,6 +128,20 @@ export default function MyContracts() {
                 >
                   {t("Pending Payment")}
                 </Button>
+                <Button
+                  onClick={() => setFilter("Pending Release")}
+                  variant={
+                    filter === "Pending Release" ? "contained" : "outlined"
+                  }
+                >
+                  {t("Pending Release")}
+                </Button>
+                {/* <Button
+                  onClick={() => setFilter("Cancelled")}
+                  variant={filter === "Cancelled" ? "contained" : "outlined"}
+                >
+                  {t("Cancelled")}
+                </Button> */}
                 <Button
                   onClick={() => setFilter("accepted")}
                   variant={filter === "accepted" ? "contained" : "outlined"}
@@ -158,6 +212,7 @@ export default function MyContracts() {
                           : contract?.job.description}
                       </p>
                     </div>
+
                     {contract?.status === "Pending Payment" ? (
                       <div className="d-flex" style={{ gap: ".5rem" }}>
                         <Button
@@ -170,10 +225,31 @@ export default function MyContracts() {
                           }}
                         >
                           {t("Pay to Put on Escrow")}
-                        </Button>
+                        </Button>{" "}
+                        {/* {contract?.payment?.id ? (
+                          <Button
+                            onClick={() => confirmPayment(contract?.payment)}
+                          >
+                            {t("Confirm Payment")}
+                          </Button>
+                        ) : (
+                          <></>
+                        )} */}
                       </div>
                     ) : (
-                      <Chip label={t(contract?.status)} color="info" />
+                      !contract?.status === "Pending Release" && (
+                        <Chip label={t(contract?.status)} color="info" />
+                      )
+                    )}
+
+                    {contract?.status === "Pending Release" && (
+                      <div className="d-flex" style={{ gap: ".5rem" }}>
+                        <Button
+                          onClick={() => approveReleaseFund(contract?.id)}
+                        >
+                          {t("Approve Release Fund")}
+                        </Button>
+                      </div>
                     )}
 
                     <div
@@ -184,8 +260,8 @@ export default function MyContracts() {
                         color: "rgb(115 129 155)",
                       }}
                     >
-                      {/* <span>{job?.applications?.length} Proposals</span>
-                      <span>Payment Verified</span>
+                      <span>Freelancer - {contract?.freelancer?.fullname}</span>
+                      {/* <span>Payment Verified</span>
                       <span>*****</span>
                       <span>98,000 ETB Spent</span>
                       <span>Addis Ababa</span> */}

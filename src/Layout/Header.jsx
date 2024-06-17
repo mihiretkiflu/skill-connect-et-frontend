@@ -3,13 +3,16 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { controlSidebar } from "../redux/slices/systemSlice";
 import { Chip } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { logoutFinished } from "../redux/slices/authSlice";
 
 export default function Header() {
   const { t } = useTranslation();
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const { sidebar } = useSelector((state) => state.system);
   const { currentUser } = useSelector((state) => state.auth);
 
@@ -112,31 +115,11 @@ export default function Header() {
               <li>
                 <a
                   className="dropdown-item d-flex align-items-center"
-                  href="users-profile.html"
+                  onClick={() => {
+                    dispatch(logoutFinished());
+                    navigate("/");
+                  }}
                 >
-                  <i className="bi bi-gear"></i>
-                  <span>{t("Account Settings")}</span>
-                </a>
-              </li>
-              <li>
-                <hr className="dropdown-divider" />
-              </li>
-
-              <li>
-                <a
-                  className="dropdown-item d-flex align-items-center"
-                  href="pages-faq.html"
-                >
-                  <i className="bi bi-question-circle"></i>
-                  <span>{t("Need Help?")}</span>
-                </a>
-              </li>
-              <li>
-                <hr className="dropdown-divider" />
-              </li>
-
-              <li>
-                <a className="dropdown-item d-flex align-items-center" href="#">
                   <i className="bi bi-box-arrow-right"></i>
                   <span>{t("Sign Out")}</span>
                 </a>

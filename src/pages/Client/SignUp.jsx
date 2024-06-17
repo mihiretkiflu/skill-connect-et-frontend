@@ -128,14 +128,20 @@ export default function SignUp() {
   );
 }
 
+const strongPasswordRegex =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/;
+
 const validator = yupResolver(
   Yup.object().shape({
     firstname: Yup.string().required(),
     lastname: Yup.string().required(),
-    email: Yup.string().required(),
     username: Yup.string().required(),
     role: Yup.string().required(),
-    password: Yup.string().required("Required"),
+    email: Yup.string().email().required(),
+    password: Yup.string()
+      .required("Required")
+      .min(6)
+      .matches(strongPasswordRegex, "Use strong passowrd"),
   })
 );
 

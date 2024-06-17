@@ -193,7 +193,7 @@ export default function WorkDetail() {
 
 const validator = yupResolver(
   Yup.object().shape({
-    price_offer: Yup.number().required(),
+    price_offer: Yup.number().min(1).required(),
     about_freelancer: Yup.string().required(),
   })
 );

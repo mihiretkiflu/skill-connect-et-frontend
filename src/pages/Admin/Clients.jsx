@@ -1,8 +1,11 @@
+import { useQuery } from "@apollo/client";
 import { Box } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import React from "react";
+import { EMPLOYERS } from "../../graphql/admin";
 
 export default function Clients() {
+  const { data, loading } = useQuery(EMPLOYERS);
   const columns = [
     {
       field: "id",
@@ -32,7 +35,11 @@ export default function Clients() {
   ];
   return (
     <Box height={"100%"}>
-      <DataGrid columns={columns} rows={[]} />
+      <DataGrid
+        columns={columns}
+        rows={data?.employers || []}
+        loading={loading}
+      />
     </Box>
   );
 }

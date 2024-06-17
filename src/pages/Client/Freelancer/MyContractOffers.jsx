@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery, useSubscription } from "@apollo/client";
 import { Box, Button, ButtonGroup, Skeleton } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -7,7 +7,11 @@ import { toast } from "react-toastify";
 import CustomCard from "../../../components/CustomCard";
 import {
   ACCEPT_REJECT_CONTRACT,
+  CONTRACT_ACCEPTED,
+  CONTRACT_REQUESTED,
+  CONTRACT_STARTED,
   GET_MY_CONTRACTS,
+  JOB_PROGRESS,
 } from "../../../graphql/contract";
 import { seeMore } from "../../../utils/misc";
 import RightSideView from "./RightSideView";
@@ -24,6 +28,11 @@ export default function MyContractOffers() {
   const [acceptRejectContract, acceptRejectContractMut] = useMutation(
     ACCEPT_REJECT_CONTRACT
   );
+  const [jobProgress, jobProgressMut] = useMutation(JOB_PROGRESS);
+
+  const contractRequested = useSubscription(CONTRACT_REQUESTED);
+  const contractAccepted = useSubscription(CONTRACT_ACCEPTED);
+  const contractStarted = useSubscription(CONTRACT_STARTED);
 
   useEffect(() => {
     if (filter === "all") {
@@ -55,6 +64,40 @@ export default function MyContractOffers() {
       toast.error(error.message);
     }
   };
+
+  const onJobProgress = async (contract_id) => {
+    try {
+      await jobProgress({
+        variables: {
+          input: {
+            contract_id,
+            status: true,
+          },
+        },
+      });
+
+      refetch();
+
+      toast.success(t("Job Progress Successfully Updated!"));
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  useEffect(() => {
+    if (contractRequested.data) toast.info("You have new Contract Request !");
+    refetch();
+  }, [contractRequested.data, contractRequested.loading]);
+
+  useEffect(() => {
+    if (contractAccepted.data) toast.info("You have new Contract Accepted !");
+    refetch();
+  }, [contractAccepted.data, contractAccepted.loading]);
+
+  useEffect(() => {
+    if (contractStarted.data) toast.info("You have new Contract Started !");
+    refetch();
+  }, [contractStarted.data, contractStarted.loading]);
 
   return (
     <div className="p-2" style={{ height: "100%" }}>
@@ -89,11 +132,25 @@ export default function MyContractOffers() {
                   {t("Pending Payment")}
                 </Button>
                 <Button
-                  onClick={() => setFilter("accepted")}
-                  variant={filter === "accepted" ? "contained" : "outlined"}
+                  onClick={() => setFilter("Funded")}
+                  variant={filter === "Funded" ? "contained" : "outlined"}
                 >
-                  {t("Accepted")}
+                  {t("Funded")}
                 </Button>
+                <Button
+                  onClick={() => setFilter("Pending Release")}
+                  variant={
+                    filter === "Pending Release" ? "contained" : "outlined"
+                  }
+                >
+                  {t("Pending Release")}
+                </Button>
+                <Button
+                  onClick={() => setFilter("Released")}
+                  variant={filter === "Released" ? "contained" : "outlined"}
+                >
+                  {t("Released")}
+                </Button>{" "}
                 <Button
                   onClick={() => setFilter("Cancelled")}
                   variant={filter === "Cancelled" ? "contained" : "outlined"}
@@ -171,6 +228,14 @@ export default function MyContractOffers() {
                           color="error"
                         >
                           {t("Reject Contract")}
+                        </Button>
+                      </div>
+                    )}
+
+                    {contract?.status === "Funded" && (
+                      <div className="d-flex" style={{ gap: ".5rem" }}>
+                        <Button onClick={() => onJobProgress(contract?.id)}>
+                          {t("Job Progress")}
                         </Button>
                       </div>
                     )}

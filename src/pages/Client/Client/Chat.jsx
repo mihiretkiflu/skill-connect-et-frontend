@@ -43,6 +43,9 @@ export default function Chat() {
 
   useEffect(() => {
     refetch();
+    if (data?.contractRequested) {
+      toast.info(t("You have new message !"));
+    }
   }, [newMessage.data, newMessage.loading]);
 
   useEffect(() => {
@@ -513,7 +516,7 @@ function NewContractModal({ t, control, startContract }) {
 
 const contract_validator = yupResolver(
   Yup.object().shape({
-    offered_amount: Yup.number().required(),
+    offered_amount: Yup.number().min(1).required(),
     start_date: Yup.date().required(),
     deadline_date: Yup.date().required(),
   })
