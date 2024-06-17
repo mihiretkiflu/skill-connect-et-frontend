@@ -3,11 +3,11 @@ import { Box, Button, Chip, Divider, Skeleton, Stack } from "@mui/material";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
-import CustomCard from "../../../components/CustomCard";
-import { MY_JOBS } from "../../../graphql/job";
-import { seeMore } from "../../../utils/misc";
-import { SEND_MESSAGE } from "../../../graphql/message";
 import { toast } from "react-toastify";
+import CustomCard from "../../../components/CustomCard";
+import { CLOSE_JOB, MY_JOBS } from "../../../graphql/job";
+import { SEND_MESSAGE } from "../../../graphql/message";
+import { seeMore } from "../../../utils/misc";
 
 export default function MyJobs() {
   const { t } = useTranslation();
@@ -20,6 +20,7 @@ export default function MyJobs() {
   const { loading, data } = useQuery(MY_JOBS);
   const [sendMessageMut, { ...sendMessageMutation }] =
     useMutation(SEND_MESSAGE);
+  const [closeJobMut, { ...closeJobMutation }] = useMutation(CLOSE_JOB);
 
   const sendMessage = async (app) => {
     try {
@@ -39,6 +40,20 @@ export default function MyJobs() {
           application: app,
         },
       });
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  const closeJob = async (job_id) => {
+    try {
+      await closeJobMut({
+        variables: {
+          closeJobId: job_id,
+        },
+      });
+
+      toast.success("Job was successfully closed !");
     } catch (error) {
       toast.error(error.message);
     }
@@ -109,7 +124,7 @@ export default function MyJobs() {
                       <Divider />
                     </div>
 
-                    <div className="d-flex mt-3 justify-content-start">
+                    <div className="d-flex mt-3 justify-content-start gap-1">
                       <Button
                         variant="outlined"
                         onClick={async () => {
@@ -122,6 +137,22 @@ export default function MyJobs() {
                         }}
                       >
                         {t("View Applications")}
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        color="error"
+                        onClick={async () => {
+                          setApplication(job?.applications);
+                          setJob({
+                            id: job?.id,
+                            employer_id: job?.employer_id,
+                            name: job?.name,
+                          });
+
+                          closeJob(job?.id);
+                        }}
+                      >
+                        {t("Close Job")}
                       </Button>
                     </div>
                   </CustomCard>

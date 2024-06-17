@@ -53,26 +53,25 @@ export const SKILLS = gql`
   }
 `;
 export const FRELELANCERS = gql`
-  query Users {
-    users {
-      id
-      avatar
-      firstname
-      lastname
-      fullname
-      username
-      gender
-      password
-      bio
-      phone
-      email
-      address
-      portfolio_dir
-      role
-      createdAt
-      updatedAt
-      skills {
-        name
+  query DashboardStats {
+    dashboardStats {
+      freelancers {
+        id
+        avatar
+        firstname
+        lastname
+        fullname
+        username
+        gender
+        password
+        bio
+        phone
+        email
+        address
+        portfolio_dir
+        role
+        createdAt
+        updatedAt
       }
     }
   }

@@ -50,7 +50,7 @@ export default function HomeNavbar() {
     {
       label: "Find Freelancer",
       link: "/find-freelancer",
-      hide: currentUser?.role === "freelance",
+      hide: currentUser?.role === "freelance" || !currentUser?.role,
     },
 
     {

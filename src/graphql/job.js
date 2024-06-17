@@ -16,6 +16,11 @@ export const POST_PROJECT = gql`
     }
   }
 `;
+export const CLOSE_JOB = gql`
+  mutation CloseJob($closeJobId: Int!) {
+    closeJob(id: $closeJobId)
+  }
+`;
 
 export const JOBS = gql`
   query Jobs {

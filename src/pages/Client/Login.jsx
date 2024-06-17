@@ -110,9 +110,9 @@ const strongPasswordRegex =
 const validator = yupResolver(
   Yup.object().shape({
     email: Yup.string().email().required(),
-    // password: Yup.string()
-    //   .required("Required")
-    //   .min(6)
-    //   .matches(strongPasswordRegex, "Use strong passowrd"),
+    password: Yup.string()
+      .required("Required")
+      .min(6)
+      .matches(strongPasswordRegex, "Use strong passowrd"),
   })
 );

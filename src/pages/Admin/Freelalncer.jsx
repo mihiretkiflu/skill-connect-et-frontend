@@ -36,7 +36,11 @@ export default function Freelancer() {
   ];
   return (
     <Box height={"100%"}>
-      <DataGrid columns={columns} rows={data?.users || []} loading={loading} />
+      <DataGrid
+        columns={columns}
+        rows={data?.dashboardStats?.freelancers || []}
+        loading={loading}
+      />
     </Box>
   );
 }
