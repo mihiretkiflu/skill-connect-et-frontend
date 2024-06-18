@@ -193,7 +193,7 @@ export default function MyJobs() {
                     <span style={{ fontWeight: "bold" }}>
                       {t("Cover Letter")}
                     </span>
-                    {/* <span>{app.about_freelancer}</span> */}
+                    <span>{app.about_freelancer}</span>
                   </Stack>
 
                   <div className="d-flex mt-3 justify-content-start">

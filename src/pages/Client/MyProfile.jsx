@@ -1,14 +1,20 @@
-import React from "react";
-import { useSelector } from "react-redux";
-import { CustomTextField } from "../../components/CustomTextField";
-import { useForm } from "react-hook-form";
-import * as Yup from "yup";
+import { useQuery } from "@apollo/client";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { AddBoxOutlined, Visibility } from "@mui/icons-material";
-import { IconButton } from "@mui/material";
+import { Visibility } from "@mui/icons-material";
+import { Chip, IconButton } from "@mui/material";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { useSelector } from "react-redux";
+import * as Yup from "yup";
+import { CustomTextField } from "../../components/CustomTextField";
+import { GET_USER } from "../../graphql/user";
+import { numberFormat } from "../../utils/misc";
 
 export default function MyProfile() {
   const { currentUser } = useSelector((state) => state.auth);
+  const { data, loading } = useQuery(GET_USER, {
+    variables: { id: currentUser.id },
+  });
 
   const {
     control,
@@ -129,8 +135,26 @@ export default function MyProfile() {
                     <div class="row">
                       <div class="col-lg-3 col-md-4 label">Skills</div>
                       <div class="col-lg-9 col-md-8">
-                        {currentUser?.skills?.map((s) => s?.name)}
+                        {loading
+                          ? ""
+                          : data?.user?.skills?.map((s) => (
+                              <Chip
+                                size="small"
+                                color="success"
+                                label={s?.name}
+                              />
+                            ))}{" "}
                       </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-lg-3 col-md-6 label">User Balance</div>
+                      <div class="col-lg-9 col-md-6">
+                        {loading
+                          ? ""
+                          : numberFormat(data?.user?.balance?.balance) +
+                            "ETB"}{" "}
+                      </div>{" "}
                     </div>
                   </div>
 

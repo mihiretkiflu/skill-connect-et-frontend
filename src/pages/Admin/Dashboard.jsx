@@ -79,7 +79,7 @@ function DataTable({ loading, recentTransactions }) {
         <div className="card-body">
           <h5 className="card-title">
             {t("Recent Transactions")}
-            <span>| 23, 789, 123 ETB</span>
+            {/* <span>| 23, 789, 123 ETB</span> */}
           </h5>
 
           <table className="table table-borderless datatable">

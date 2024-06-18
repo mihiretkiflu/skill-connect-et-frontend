@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useSubscription } from "@apollo/client";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, CircularProgress } from "@mui/material";
+import { Avatar, Button, CircularProgress } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -286,7 +286,7 @@ function RightSide({ job, refetch, selectedChat, message }) {
                   <img
                     src={selectedChat?.participant?.avatar}
                     className="rounded-circle mr-1"
-                    alt="Sharon Lessman"
+                    alt={selectedChat?.participant?.fullnam}
                     width="40"
                     height="40"
                   />
@@ -377,18 +377,22 @@ function LeftSideMessage({ msg }) {
   return (
     <div className="chat-message-left pb-4">
       <div>
-        <img
-          src={msg?.sender?.avatar}
-          className="rounded-circle mr-1"
-          alt="Sharon Lessman"
-          width="40"
-          height="40"
-        />
-        {/* <Avatar>
-          {currentUser.id === msg?.sender?.id
-            ? msg?.sender?.fullname[0]
-            : msg?.sender?.fullname[0]}
-        </Avatar> */}
+        {msg?.sender?.avatar ? (
+          <img
+            src={msg?.sender?.avatar}
+            className="rounded-circle mr-1"
+            alt={msg?.sender?.fullname}
+            width="40"
+            height="40"
+          />
+        ) : (
+          <Avatar>
+            {currentUser.id === msg?.sender?.id
+              ? msg?.sender?.fullname[0]
+              : msg?.sender?.fullname[0]}
+          </Avatar>
+        )}
+        {/**/}
         <div
           className="text-muted small text-nowrap mt-2"
           style={{ fontSize: ".7rem", textTransform: "lowercase" }}
@@ -420,13 +424,22 @@ function RightSideMessage({ msg }) {
   return (
     <div className="chat-message-right pb-4">
       <div>
-        <img
-          src={currentUser?.avatar}
-          className="rounded-circle mr-1"
-          alt="Chris Wood"
-          width="40"
-          height="40"
-        />
+        {currentUser?.avatar ? (
+          <img
+            src={currentUser?.avatar}
+            className="rounded-circle mr-1"
+            alt="Chris Wood"
+            width="40"
+            height="40"
+          />
+        ) : (
+          <Avatar>
+            {currentUser.id === msg?.sender?.id
+              ? currentUser.fullname[0]
+              : currentUser.fullname[0]}
+          </Avatar>
+        )}
+
         <div
           className="text-muted small text-nowrap mt-2"
           style={{ fontSize: ".7rem", textTransform: "lowercase" }}

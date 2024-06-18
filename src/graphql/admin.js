@@ -72,6 +72,9 @@ export const FRELELANCERS = gql`
         role
         createdAt
         updatedAt
+        # skills {
+        #   name
+        # }
       }
     }
   }

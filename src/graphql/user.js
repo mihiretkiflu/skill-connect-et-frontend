@@ -39,3 +39,38 @@ export const FILL_FREELANCER_PROFILE = gql`
     updateProfile(input: $input)
   }
 `;
+
+export const GET_USER = gql`
+  query User($id: Int!) {
+    user(id: $id) {
+      id
+      avatar
+      firstname
+      lastname
+      fullname
+      username
+      gender
+      password
+      bio
+      phone
+      email
+      address
+      portfolio_dir
+      role
+      createdAt
+      updatedAt
+      skills {
+        name
+      }
+      jobs {
+        name
+      }
+      # feedbacks {
+
+      # }
+      balance {
+        balance
+      }
+    }
+  }
+`;
