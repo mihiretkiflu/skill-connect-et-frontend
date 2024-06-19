@@ -60,17 +60,42 @@ export const GET_USER = gql`
       createdAt
       updatedAt
       skills {
+        id
         name
       }
       jobs {
         name
       }
-      # feedbacks {
-
-      # }
+      feedbacks {
+        content
+      }
       balance {
         balance
       }
     }
+  }
+`;
+
+export const DELETE_USER = gql`
+  mutation DeleteUser($id: Int!) {
+    deleteUser(user_id: $id)
+  }
+`;
+
+export const EDIT_USER = gql`
+  mutation EditProfile($input: EditProfileInput) {
+    editProfile(input: $input)
+  }
+`;
+
+export const DEPOSIT_MONEY = gql`
+  mutation DepositMoney($input: DepositMoneyInput) {
+    depositMoney(input: $input)
+  }
+`;
+
+export const BAN_USER = gql`
+  mutation BanUser($id: Int!) {
+    banUser(user_id: $id)
   }
 `;

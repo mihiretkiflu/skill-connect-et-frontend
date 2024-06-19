@@ -67,7 +67,12 @@ export default function HomeNavbar() {
     {
       label: "My Jobs",
       link: "/my-jobs",
-      hide: currentUser?.role === "freelance",
+      hide: !currentUser?.role || currentUser?.role === "freelance",
+    },
+    {
+      label: "My Applications",
+      link: "/my-applications",
+      hide: !currentUser?.role || !(currentUser?.role === "freelance"),
     },
     {
       label: "Login",
@@ -80,12 +85,12 @@ export default function HomeNavbar() {
       hide: currentUser?.role,
     },
     {
-      label: "Create Profile",
+      label: currentUser?.bio ? "Edit Profile" : "Create Profile",
       link: "/create-profile",
       hide: currentUser?.role !== "freelance",
     },
   ];
-
+  console.log(!currentUser?.role);
   const logout = () => {
     dispatch(logoutFinished());
     navigate("/");

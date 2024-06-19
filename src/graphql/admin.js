@@ -58,6 +58,7 @@ export const FRELELANCERS = gql`
       freelancers {
         id
         avatar
+        banned
         firstname
         lastname
         fullname

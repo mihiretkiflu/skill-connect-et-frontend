@@ -1,7 +1,9 @@
 import { useMutation, useQuery, useSubscription } from "@apollo/client";
 import { Box, Button, ButtonGroup, Skeleton } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import CustomCard from "../../../components/CustomCard";
@@ -12,14 +14,18 @@ import {
   CONTRACT_STARTED,
   GET_MY_CONTRACTS,
   JOB_PROGRESS,
+  SEND_FEEDBACK,
 } from "../../../graphql/contract";
 import { seeMore } from "../../../utils/misc";
 import RightSideView from "./RightSideView";
+import { CustomTextField } from "../../../components/CustomTextField";
 
 export default function MyContractOffers() {
   const { t } = useTranslation();
 
   const navigate = useNavigate();
+
+  const { currentUser } = useSelector((state) => state.auth);
 
   const [contracts, setContracts] = useState([]);
   const [filter, setFilter] = useState("Pending Acceptance");
@@ -28,11 +34,25 @@ export default function MyContractOffers() {
   const [acceptRejectContract, acceptRejectContractMut] = useMutation(
     ACCEPT_REJECT_CONTRACT
   );
+  const [sndFeedback, sndFeedbackMut] = useMutation(SEND_FEEDBACK);
+
   const [jobProgress, jobProgressMut] = useMutation(JOB_PROGRESS);
 
   const contractRequested = useSubscription(CONTRACT_REQUESTED);
   const contractAccepted = useSubscription(CONTRACT_ACCEPTED);
   const contractStarted = useSubscription(CONTRACT_STARTED);
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    watch,
+    formState: { errors },
+  } = useForm({
+    mode: "all",
+    // resolver: validator,
+    defaultValues: {},
+  });
 
   useEffect(() => {
     if (filter === "all") {
@@ -81,6 +101,30 @@ export default function MyContractOffers() {
       toast.success(t("Job Progress Successfully Updated!"));
     } catch (error) {
       toast.error(error.message);
+    }
+  };
+
+  const sendFeedback = async (contract) => {
+    if (watch("content")) {
+      try {
+        await sndFeedback({
+          variables: {
+            input: {
+              content: watch("content"),
+              to_id:
+                currentUser?.role === "freelance"
+                  ? contract?.employer?.id
+                  : contract?.freelancer?.id,
+            },
+          },
+        });
+
+        refetch();
+
+        toast.success(t("Feedback Successfully Sent !"));
+      } catch (error) {
+        toast.error(error.message);
+      }
     }
   };
 
@@ -240,6 +284,30 @@ export default function MyContractOffers() {
                       </div>
                     )}
 
+                    <div
+                      className="d-flex"
+                      style={{
+                        gap: "1rem",
+                        fontSize: ".8rem",
+                        color: "#899bbd",
+                      }}
+                    >
+                      {" "}
+                      {contract?.status === "Released" && (
+                        <>
+                          <CustomTextField
+                            control={control}
+                            name={"content"}
+                            label={"Feedback"}
+                            flex={1}
+                          />
+
+                          <Button onClick={() => sendFeedback(contract)}>
+                            Send
+                          </Button>
+                        </>
+                      )}
+                    </div>
                     <div
                       className="d-flex mt-2"
                       style={{

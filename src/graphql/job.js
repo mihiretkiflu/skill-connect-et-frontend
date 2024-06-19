@@ -30,6 +30,7 @@ export const JOBS = gql`
       description
       posted_date
       createdAt
+      hasApplied
       skill {
         name
       }

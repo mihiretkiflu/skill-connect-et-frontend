@@ -119,7 +119,11 @@ export default function WorkDetail() {
 
                 <div className="d-flex mt-3 justify-content-start">
                   {!apply && currentUser?.role === "freelance" && (
-                    <Button variant="outlined" onClick={() => setApply(true)}>
+                    <Button
+                      variant="outlined"
+                      onClick={() => setApply(true)}
+                      disabled={state?.job?.hasApplied}
+                    >
                       {t("View Application Detail")}
                     </Button>
                   )}

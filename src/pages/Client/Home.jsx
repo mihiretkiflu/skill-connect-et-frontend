@@ -1,9 +1,45 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import { CustomTextField } from "../../components/CustomTextField";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as Yup from "yup";
+import { Button } from "@mui/material";
 
 export default function Home() {
   const { t } = useTranslation();
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    trigger,
+    formState: { errors },
+  } = useForm({
+    mode: "all",
+    resolver: validator,
+    defaultValues: {},
+  });
+
+  const onSubmit = async (values) => {
+    console.log({ values });
+
+    const isValid = await trigger(["name", "email", "subject", "message"]);
+
+    // try {
+    //   const { data } = await createWarehouse({ variables: { input: values } });
+
+    //   refetch();
+    //   props.onHide();
+    //   reset();
+    //   toast.success("Warehouse Successfully Added!", { autoClose: 500 });
+    // } catch (error) {
+    //   toast.error(error.message, {
+    //     autoClose: 500,
+    //   });
+    // }
+  };
 
   return (
     <div style={{ height: "100%", overflowY: "auto" }}>
@@ -415,7 +451,7 @@ export default function Home() {
                   <div className="address">
                     <i className="bi bi-geo-alt"></i>
                     <h4>Location:</h4>
-                    <p>A108 Adam Street, New York, NY 535022</p>
+                    <p>Hawassa, Ethiopia</p>
                   </div>
 
                   <div className="email">
@@ -427,7 +463,7 @@ export default function Home() {
                   <div className="phone">
                     <i className="bi bi-phone"></i>
                     <h4>Call:</h4>
-                    <p>+1 5589 55488 55s</p>
+                    <p>+251 778 788</p>
                   </div>
 
                   <iframe
@@ -440,52 +476,38 @@ export default function Home() {
               </div>
 
               <div className="col-lg-7 mt-5 mt-lg-0 d-flex align-items-stretch">
-                <form
-                  action="forms/contact.php"
-                  method="post"
-                  role="form"
-                  className="php-email-form"
-                >
+                <form class="php-email-form" onSubmit={handleSubmit(onSubmit)}>
                   <div className="row">
                     <div className="form-group col-md-6">
-                      <label for="name">Your Name</label>
-                      <input
-                        type="text"
-                        name="name"
-                        className="form-control"
-                        id="name"
-                        required
+                      <CustomTextField
+                        control={control}
+                        name={"name"}
+                        label={"name"}
                       />
                     </div>
                     <div className="form-group col-md-6 mt-3 mt-md-0">
-                      <label for="name">Your Email</label>
-                      <input
-                        type="email"
-                        className="form-control"
-                        name="email"
-                        id="email"
-                        required
+                      <CustomTextField
+                        control={control}
+                        name={"email"}
+                        label={"Email"}
                       />
                     </div>
                   </div>
                   <div className="form-group mt-3">
-                    <label for="name">Subject</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      name="subject"
-                      id="subject"
-                      required
+                    <CustomTextField
+                      control={control}
+                      name={"subject"}
+                      label={"Subject"}
                     />
                   </div>
                   <div className="form-group mt-3">
-                    <label for="name">Message</label>
-                    <textarea
-                      className="form-control"
-                      name="message"
-                      rows="10"
-                      required
-                    ></textarea>
+                    <CustomTextField
+                      control={control}
+                      name={"message"}
+                      label={"Message"}
+                      multiline
+                      rows={10}
+                    />
                   </div>
                   <div className="my-3">
                     <div className="loading">Loading</div>
@@ -510,14 +532,11 @@ export default function Home() {
             <div class="row justify-content-center">
               <div class="col-lg-6">
                 <h3>Skill Connect Ethiopia</h3>
-                <p>
-                  Et aut eum quis fuga eos sunt ipsa nihil. Labore corporis
-                  magni eligendi fuga maxime saepe commodi placeat.
-                </p>
+                <p>Skill Connect Ethiopia</p>
               </div>
             </div>
 
-            <div class="row footer-newsletter justify-content-center">
+            {/* <div class="row footer-newsletter justify-content-center">
               <div class="col-lg-6">
                 <form action="" method="post">
                   <input
@@ -528,7 +547,7 @@ export default function Home() {
                   <input type="submit" value="Subscribe" />
                 </form>
               </div>
-            </div>
+            </div> */}
 
             <div class="social-links">
               <a href="#" class="twitter">
@@ -564,3 +583,31 @@ export default function Home() {
     </div>
   );
 }
+
+const strongPasswordRegex =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/;
+const stringWithOutNumber = /^[A-Za-z]*$/;
+
+const emailValidator = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+
+const validator = yupResolver(
+  Yup.object().shape({
+    name: Yup.string()
+      .matches(
+        stringWithOutNumber,
+        "The field should not contain numbers or special characters"
+      )
+      .required(),
+    subject: Yup.string()
+      .matches(
+        stringWithOutNumber,
+        "The field should not contain numbers or special characters"
+      )
+      .required(),
+    message: Yup.string().required(),
+    email: Yup.string()
+      .email("Invalid email format")
+      .matches(emailValidator, "Invalid email format")
+      .required("Email is required"),
+  })
+);

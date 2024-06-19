@@ -138,6 +138,19 @@ export default function MyJobs() {
                       >
                         {t("View Applications")}
                       </Button>
+                      {/* <Button
+                        variant="outlined"
+                        onClick={async () => {
+                          setApplication(job?.applications);
+                          setJob({
+                            id: job?.id,
+                            employer_id: job?.employer_id,
+                            name: job?.name,
+                          });
+                        }}
+                      >
+                        {t("Invite Freelancers")}
+                      </Button> */}
                       <Button
                         variant="outlined"
                         color="error"
@@ -197,6 +210,21 @@ export default function MyJobs() {
                   </Stack>
 
                   <div className="d-flex mt-3 justify-content-start">
+                    <Button
+                      variant="outlined"
+                      onClick={() =>
+                        navigate(
+                          "/profile/" +
+                            app?.freelancer?.id +
+                            ("/" + app?.freelancer?.fullname)
+                              .toLowerCase()
+                              .replaceAll(" ", "_"),
+                          { state: { user: app?.freelancer } }
+                        )
+                      }
+                    >
+                      {t("View Profile")}
+                    </Button>
                     <Button variant="outlined" onClick={() => sendMessage(app)}>
                       {t("Invite for Interview")}
                     </Button>

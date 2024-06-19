@@ -8,7 +8,7 @@ import { seeMore } from "../../../utils/misc";
 import RightSideView from "./RightSideView";
 import { useTranslation } from "react-i18next";
 
-export default function FindWork() {
+export default function MyApplications() {
   const { t } = useTranslation();
 
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ export default function FindWork() {
             style={{ height: "100%", overflow: "auto" }}
           >
             {!loading ? (
-              data?.Jobs.map((job) => (
+              data?.Jobs?.filter((j) => j.hasApplied).map((job) => (
                 <Box
                   sx={{
                     maxHeight: "20rem",

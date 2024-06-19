@@ -1,3 +1,4 @@
+import { useSelector } from "react-redux";
 import { Route, Routes } from "react-router-dom";
 import HomeLayout from "./Layout/HomeLayout";
 import Layout from "./Layout/Layout";
@@ -10,21 +11,21 @@ import Jobs from "./pages/Admin/Jobs";
 import Skills from "./pages/Admin/Skills";
 import Chat from "./pages/Client/Client/Chat";
 import FindFreelancer from "./pages/Client/Client/FindFreelancer";
+import MyContracts from "./pages/Client/Client/MyContracts";
 import MyJobs from "./pages/Client/Client/MyJobs";
 import PostProject from "./pages/Client/Client/PostProject";
 import ContractDetail from "./pages/Client/Freelancer/ContractDetail";
 import CreateProfile from "./pages/Client/Freelancer/FillProfile";
 import FindWork from "./pages/Client/Freelancer/FindWork";
+import MyApplications from "./pages/Client/Freelancer/MyApplications";
 import MyContractOffers from "./pages/Client/Freelancer/MyContractOffers";
 import ViewFreelancerProfile from "./pages/Client/Freelancer/ViewFreelancerProfile";
 import WorkDetail from "./pages/Client/Freelancer/WorkDetail";
 import Home from "./pages/Client/Home";
 import Login from "./pages/Client/Login";
-import SignUp from "./pages/Client/SignUp";
-import { useSelector } from "react-redux";
-import MyContracts from "./pages/Client/Client/MyContracts";
 import MyProfile from "./pages/Client/MyProfile";
 import PaymentSuccess from "./pages/Client/PaymentSuccess";
+import SignUp from "./pages/Client/SignUp";
 
 function App() {
   const { currentUser } = useSelector((state) => state.auth);
@@ -64,6 +65,7 @@ function App() {
             <Route path=":id" element={<ContractDetail />} />
           </Route>
           <Route path="/my-jobs" element={<MyJobs />} />
+          <Route path="/my-applications" element={<MyApplications />} />
         </Route>
         <Route path="/admin" element={<Layout />}>
           <Route path="" element={<Dashboard />} />

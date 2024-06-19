@@ -2,7 +2,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { CheckCircleOutlineOutlined } from "@mui/icons-material";
 import { Box, Button, Divider } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -13,7 +13,11 @@ import {
   CustomTextField,
 } from "../../../components/CustomTextField";
 import { POST_PROJECT_LOOKUPS } from "../../../graphql/job";
-import { FILL_FREELANCER_PROFILE } from "../../../graphql/user";
+import {
+  EDIT_USER,
+  FILL_FREELANCER_PROFILE,
+  GET_USER,
+} from "../../../graphql/user";
 import { fillFProfile } from "../../../redux/slices/authSlice";
 import { useTranslation } from "react-i18next";
 
@@ -23,22 +27,27 @@ export default function CreateProfile() {
   const dispatch = useDispatch();
 
   const { currentUser } = useSelector((state) => state.auth);
-
+  const user = useQuery(GET_USER, {
+    variables: { id: currentUser.id },
+  });
   const lookups = useQuery(POST_PROJECT_LOOKUPS);
 
   const [fillProfile, { loading }] = useMutation(FILL_FREELANCER_PROFILE);
+  const [editProfile, { ...editProfileMutaion }] = useMutation(EDIT_USER);
 
   const {
     control,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
     watch,
   } = useForm({
     mode: "all",
     resolver: validator,
     defaultValues: {
-      fullname: currentUser.firstname + " " + currentUser.lastname,
+      firstname: currentUser?.firstname,
+      lastname: currentUser?.lastname,
       phone: currentUser?.phone,
       gender: currentUser?.gender,
       bio: currentUser?.bio,
@@ -49,21 +58,42 @@ export default function CreateProfile() {
     },
   });
 
+  useEffect(() => {
+    setValue(
+      "skills",
+      user.data?.user?.skills?.map((s) => s.id)
+    );
+  }, [user.data, user.loading]);
+
   const onSubmit = async (values) => {
     console.log({ values });
 
     delete values.fullname;
+    delete values.firstname;
+    delete values.lastname;
+
     try {
-      const { data } = await fillProfile({
-        variables: { input: { ...values, id: currentUser.id } },
-      });
+      console.log(!!currentUser?.bio);
+      if (currentUser?.bio) {
+        const { data } = await editProfile({
+          variables: { input: { ...values, id: currentUser.id } },
+        });
 
-      dispatch(fillFProfile({ ...currentUser, ...values }));
+        dispatch(fillFProfile({ ...currentUser, ...values }));
 
-      // refetch();
-      // props.onHide();
-      // reset();
-      toast.success(t("Profile Successfully Created!"), { autoClose: 500 });
+        toast.success(t("Profile Successfully Edited!"), { autoClose: 500 });
+      } else {
+        const { data } = await fillProfile({
+          variables: { input: { ...values, id: currentUser.id } },
+        });
+
+        dispatch(fillFProfile({ ...currentUser, ...values }));
+
+        // refetch();
+        // props.onHide();
+        // reset();
+        toast.success(t("Profile Successfully Created!"), { autoClose: 500 });
+      }
     } catch (error) {
       toast.error(error.message, {
         autoClose: 500,
@@ -97,9 +127,15 @@ export default function CreateProfile() {
                       lf={4}
                       tf={8}
                       control={control}
-                      name={"fullname"}
-                      label={"Full Name"}
-                      disabled
+                      name={"firstname"}
+                      label={"First Name"}
+                    />{" "}
+                    <CustomTextField
+                      lf={4}
+                      tf={8}
+                      control={control}
+                      name={"lastname"}
+                      label={"Last Name"}
                     />{" "}
                     <CustomTextField
                       lf={4}
@@ -116,7 +152,7 @@ export default function CreateProfile() {
                       name={"skills"}
                       label={"Select Your Skills"}
                       loading={lookups.loading}
-                      options={lookups.data?.skills}
+                      options={lookups.data?.skills || []}
                       multiple
                     />
                     <CustomTextField
@@ -164,7 +200,7 @@ export default function CreateProfile() {
                         color="success"
                         type="submit"
                       >
-                        {"Save"}
+                        {currentUser?.bio ? "Edit" : "Save"}
                       </Button>
                     </div>
                   </form>

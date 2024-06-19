@@ -16,6 +16,11 @@ export const GET_EMPLOYER_CONTRACTS = gql`
         fullname
       }
 
+      employer {
+        id
+        fullname
+      }
+
       job {
         id
         description
@@ -127,6 +132,14 @@ export const CONTRACT_STARTED = gql`
 export const CONTRACT_REQUESTED = gql`
   subscription ContractRequested {
     contractRequested {
+      id
+    }
+  }
+`;
+
+export const SEND_FEEDBACK = gql`
+  mutation CreateFeedback($input: CreateFeedbackInput) {
+    createFeedback(input: $input) {
       id
     }
   }

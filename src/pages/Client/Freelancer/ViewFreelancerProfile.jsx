@@ -1,14 +1,43 @@
+import { useMutation, useQuery } from "@apollo/client";
 import { Launch } from "@mui/icons-material";
 import { Box, Button, Chip, Divider, IconButton } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router";
+import { toast } from "react-toastify";
 import CustomCard from "../../../components/CustomCard";
+import { SEND_MESSAGE } from "../../../graphql/message";
+import { useSelector } from "react-redux";
+import { GET_USER } from "../../../graphql/user";
 
 export default function ViewFreelancerProfile() {
   const { t } = useTranslation();
 
+  const { currentUser } = useSelector((state) => state.auth);
+  const { data, loading } = useQuery(GET_USER, {
+    variables: { id: currentUser.id },
+  });
+
   const { state } = useLocation();
+
+  const [sendMessageMut, { ...sendMessageMutation }] =
+    useMutation(SEND_MESSAGE);
+
+  const sendMessage = async (app) => {
+    try {
+      await sendMessageMut({
+        variables: {
+          input: {
+            content:
+              "You are invited to apply for a job by " + currentUser?.fullname,
+            receiver_id: app?.freelancer?.id,
+          },
+        },
+      });
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
 
   return (
     <div className="p-2" style={{ height: "100%" }}>
@@ -110,9 +139,19 @@ export default function ViewFreelancerProfile() {
                 </div> */}
                 <b className="mt-3">Skills</b> <Divider />
                 <div className="d-flex mt-2 flex-wrap" style={{ gap: ".5rem" }}>
-                  {state?.user?.skills?.map((s) => (
+                  {data?.user?.skills?.map((s) => (
                     <Chip size="small" label={s?.name} />
                   ))}
+                </div>{" "}
+                <br />
+                <b className="mt-3">Feedbacks</b> <Divider />
+                <div className="d-flex mt-2 flex-wrap" style={{ gap: ".5rem" }}>
+                  <ul>
+                    {" "}
+                    {data?.user?.feedbacks?.map((s, i) => (
+                      <li key={i}>{s?.content}</li>
+                    ))}
+                  </ul>
                 </div>
                 <div className="d-flex mt-3 justify-content-between">
                   <Button

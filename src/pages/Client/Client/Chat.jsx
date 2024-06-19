@@ -126,7 +126,7 @@ function LeftSide({ message, messages, setSelectedChat }) {
       className="col-12 col-lg-5 col-xl-3 border-right"
       style={{ height: "100%" }}
     >
-      <div className="px-4 d-none d-md-block">
+      {/* <div className="px-4 d-none d-md-block">
         <div className="d-flex align-items-center">
           <div className="flex-grow-1">
             <input
@@ -136,12 +136,13 @@ function LeftSide({ message, messages, setSelectedChat }) {
             />
           </div>
         </div>
-      </div>
+      </div> */}
 
       <div
         style={{
           height: "calc(100% - 4.4rem)",
           overflow: "auto",
+          marginTop: "2rem",
         }}
       >
         {messages?.map((msg, i) => (
@@ -168,7 +169,7 @@ function LeftSide({ message, messages, setSelectedChat }) {
                 {msg?.participant?.fullname}
                 <div className="small">
                   <span className="fas fa-circle chat-online"></span>{" "}
-                  {t("Online")} / {t("Offline")}
+                  {/* {t("Online")} / {t("Offline")} */}
                 </div>
               </div>
             </div>
@@ -294,7 +295,7 @@ function RightSide({ job, refetch, selectedChat, message }) {
                 <div className="flex-grow-1 pl-3">
                   <strong>{selectedChat?.participant?.fullname}</strong>
                   <div className="text-muted small">
-                    <em>{t("online")}</em>
+                    {/* <em>{t("online")}</em> */}
                   </div>
                 </div>
                 <div>

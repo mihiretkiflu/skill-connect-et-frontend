@@ -1,11 +1,16 @@
-import { useQuery } from "@apollo/client";
-import { Box } from "@mui/material";
+import { useMutation, useQuery } from "@apollo/client";
+import { Box, Button, ButtonGroup } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import React from "react";
 import { FRELELANCERS } from "../../graphql/admin";
+import { BAN_USER, DELETE_USER } from "../../graphql/user";
+import { toast } from "react-toastify";
 
 export default function Freelancer() {
-  const { data, loading } = useQuery(FRELELANCERS);
+  const { data, loading, refetch } = useQuery(FRELELANCERS);
+
+  const [deleteUser, deleteUserMut] = useMutation(DELETE_USER);
+  const [banUser, banUserMut] = useMutation(BAN_USER);
 
   const columns = [
     {
@@ -32,6 +37,38 @@ export default function Freelancer() {
       field: "email",
       headerName: "Email",
       flex: 1,
+    },
+    {
+      field: "banned",
+      headerName: "Email",
+      flex: 1,
+      renderCell: ({ value }) => (value ? "banned" : "active"),
+    },
+    {
+      field: "",
+      headerName: "Actions",
+      flex: 1,
+      renderCell: ({ row }) => (
+        <ButtonGroup>
+          <Button
+            onClick={async () => {
+              try {
+                await banUser({
+                  variables: {
+                    id: row?.id,
+                  },
+                });
+                refetch();
+                toast.success("User Successfully Banned !");
+              } catch (error) {
+                toast.error(error?.message);
+              }
+            }}
+          >
+            Ban
+          </Button>{" "}
+        </ButtonGroup>
+      ),
     },
   ];
   return (

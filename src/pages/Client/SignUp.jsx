@@ -130,14 +130,30 @@ export default function SignUp() {
 
 const strongPasswordRegex =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/;
+const stringWithOutNumber = /^[A-Za-z]*$/;
+
+const emailValidator = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
 const validator = yupResolver(
   Yup.object().shape({
-    firstname: Yup.string().required(),
-    lastname: Yup.string().required(),
+    firstname: Yup.string()
+      .matches(
+        stringWithOutNumber,
+        "The field should not contain numbers or special characters"
+      )
+      .required(),
+    lastname: Yup.string()
+      .matches(
+        stringWithOutNumber,
+        "The field should not contain numbers or special characters"
+      )
+      .required(),
     username: Yup.string().required(),
     role: Yup.string().required(),
-    email: Yup.string().email().required(),
+    email: Yup.string()
+      .email("Invalid email format")
+      .matches(emailValidator, "Invalid email format")
+      .required("Email is required"),
     password: Yup.string()
       .required("Required")
       .min(6)

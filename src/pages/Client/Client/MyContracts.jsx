@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useSubscription } from "@apollo/client";
-import { Box, Button, ButtonGroup, Chip, Skeleton } from "@mui/material";
+import { Box, Button, ButtonGroup, Chip, Skeleton, Stack } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
@@ -12,26 +12,46 @@ import {
   CONTRACT_REQUESTED,
   CONTRACT_STARTED,
   GET_EMPLOYER_CONTRACTS,
+  SEND_FEEDBACK,
 } from "../../../graphql/contract";
 import { seeMore } from "../../../utils/misc";
 import RightSideView from "../Freelancer/RightSideView";
+import { CustomTextField } from "../../../components/CustomTextField";
+import { useForm } from "react-hook-form";
+import { useSelector } from "react-redux";
 
 export default function MyContracts() {
   const { t } = useTranslation();
 
   const navigate = useNavigate();
 
+  const { currentUser } = useSelector((state) => state.auth);
+
   const [contracts, setContracts] = useState([]);
   const [filter, setFilter] = useState("Pending Acceptance");
 
   const { data, loading, refetch } = useQuery(GET_EMPLOYER_CONTRACTS);
   const [confirmPaymnt, confirmPaymntMut] = useMutation(CONFIRM_PAYMENT);
+  const [sndFeedback, sndFeedbackMut] = useMutation(SEND_FEEDBACK);
   const [approveReleaseFnd, approveReleaseFndMut] =
     useMutation(APPROVE_RELEASE_FUND);
 
   const contractRequested = useSubscription(CONTRACT_REQUESTED);
   const contractAccepted = useSubscription(CONTRACT_ACCEPTED);
   const contractStarted = useSubscription(CONTRACT_STARTED);
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm({
+    mode: "all",
+    // resolver: validator,
+    defaultValues: {},
+  });
 
   useEffect(() => {
     if (filter === "all") {
@@ -78,6 +98,30 @@ export default function MyContracts() {
       toast.success(t("Payment Successfully Confirmed !"));
     } catch (error) {
       toast.error(error.message);
+    }
+  };
+
+  const sendFeedback = async (contract) => {
+    if (watch("content")) {
+      try {
+        await sndFeedback({
+          variables: {
+            input: {
+              content: watch("content"),
+              to_id:
+                currentUser?.role === "freelance"
+                  ? contract?.employer?.id
+                  : contract?.freelancer?.id,
+            },
+          },
+        });
+
+        refetch();
+        setValue("content", "");
+        toast.success(t("Feedback Successfully Sent !"));
+      } catch (error) {
+        toast.error(error.message);
+      }
     }
   };
 
@@ -136,18 +180,12 @@ export default function MyContracts() {
                 >
                   {t("Pending Release")}
                 </Button>
-                {/* <Button
-                  onClick={() => setFilter("Cancelled")}
-                  variant={filter === "Cancelled" ? "contained" : "outlined"}
-                >
-                  {t("Cancelled")}
-                </Button> */}
                 <Button
-                  onClick={() => setFilter("accepted")}
-                  variant={filter === "accepted" ? "contained" : "outlined"}
+                  onClick={() => setFilter("Released")}
+                  variant={filter === "Released" ? "contained" : "outlined"}
                 >
-                  {t("Accepted")}
-                </Button>
+                  {t("Released")}
+                </Button>{" "}
                 <Button
                   onClick={() => setFilter("Cancelled")}
                   variant={filter === "Cancelled" ? "contained" : "outlined"}
@@ -241,6 +279,31 @@ export default function MyContracts() {
                         <Chip label={t(contract?.status)} color="info" />
                       )
                     )}
+
+                    <div
+                      className="d-flex"
+                      style={{
+                        gap: "1rem",
+                        fontSize: ".8rem",
+                        color: "#899bbd",
+                      }}
+                    >
+                      {" "}
+                      {contract?.status === "Released" && (
+                        <Stack direction={"row"} flex={1} width={"35rem"}>
+                          <CustomTextField
+                            control={control}
+                            name={"content"}
+                            label={"Feedback"}
+                            flex={1}
+                          />
+
+                          <Button onClick={() => sendFeedback(contract)}>
+                            Send
+                          </Button>
+                        </Stack>
+                      )}
+                    </div>
 
                     {contract?.status === "Pending Release" && (
                       <div className="d-flex" style={{ gap: ".5rem" }}>
