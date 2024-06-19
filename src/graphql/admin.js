@@ -80,6 +80,15 @@ export const FRELELANCERS = gql`
     }
   }
 `;
+
+export const CREATE_SKILL = gql`
+  mutation CreateSkill($name: String!) {
+    createSkill(name: $name) {
+      id
+    }
+  }
+`;
+
 export const EMPLOYERS = gql`
   query Employers {
     employers {
@@ -99,6 +108,7 @@ export const EMPLOYERS = gql`
       role
       createdAt
       updatedAt
+      banned
     }
   }
 `;

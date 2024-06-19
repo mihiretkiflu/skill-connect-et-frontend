@@ -119,9 +119,16 @@ export default function PostProject() {
   );
 }
 
+const stringWithOutNumber = /^[A-Za-z]*$/;
+
 const validator = yupResolver(
   Yup.object().shape({
-    name: Yup.string().required(),
+    name: Yup.string()
+      .matches(
+        stringWithOutNumber,
+        "The field should not contain numbers or special characters"
+      )
+      .required(),
     skill_id: Yup.number().required(),
     description: Yup.string().required(),
   })

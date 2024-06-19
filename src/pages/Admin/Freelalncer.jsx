@@ -40,7 +40,7 @@ export default function Freelancer() {
     },
     {
       field: "banned",
-      headerName: "Email",
+      headerName: "Banned",
       flex: 1,
       renderCell: ({ value }) => (value ? "banned" : "active"),
     },
@@ -55,7 +55,8 @@ export default function Freelancer() {
               try {
                 await banUser({
                   variables: {
-                    id: row?.id,
+                    userId: row?.id,
+                    ban: row?.banned ? false : true,
                   },
                 });
                 refetch();
@@ -65,8 +66,8 @@ export default function Freelancer() {
               }
             }}
           >
-            Ban
-          </Button>{" "}
+            {row?.banned ? "Unban" : "Ban"}
+          </Button>
         </ButtonGroup>
       ),
     },

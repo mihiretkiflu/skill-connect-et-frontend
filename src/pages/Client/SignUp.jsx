@@ -33,7 +33,7 @@ export default function SignUp() {
     try {
       await createUser({ variables: { input: values } });
 
-      navigate("/login");
+      navigate("/login", { state: { unverified: true } });
 
       toast.success(t("User Successfully Added!"), { autoClose: 500 });
     } catch (error) {

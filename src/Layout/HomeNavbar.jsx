@@ -47,11 +47,11 @@ export default function HomeNavbar() {
       link: "/find-work",
       hide: currentUser?.role !== "freelance",
     },
-    {
-      label: "Find Freelancer",
-      link: "/find-freelancer",
-      hide: currentUser?.role === "freelance" || !currentUser?.role,
-    },
+    // {
+    //   label: "Find Freelancer",
+    //   link: "/find-freelancer",
+    //   hide: currentUser?.role === "freelance" || !currentUser?.role,
+    // },
 
     {
       label: "Messages",
@@ -102,7 +102,7 @@ export default function HomeNavbar() {
         <nav
           id="navbar"
           className="navbar d-flex justify-content-between"
-          style={{ width: currentUser?.id && "100%" }}
+          style={{ width: "100%" }}
         >
           <ul>
             {navbars.map(
@@ -183,6 +183,13 @@ export default function HomeNavbar() {
                 </li>
               </ul>
             </li>
+            {!currentUser?.role && (
+              <li>
+                <NavLink className="getstarted" to="/login">
+                  {t("Get Started")}
+                </NavLink>
+              </li>
+            )}
             {currentUser?.id && (
               <li className="nav-item dropdown pe-3">
                 <a

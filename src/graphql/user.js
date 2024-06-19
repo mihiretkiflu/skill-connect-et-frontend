@@ -94,8 +94,28 @@ export const DEPOSIT_MONEY = gql`
   }
 `;
 
+export const REQUEST_RESET_PWD = gql`
+  mutation RequestResetPassword($email: String!) {
+    requestResetPassword(email: $email)
+  }
+`;
+
+export const RESET_PWD = gql`
+  mutation ResetPassword(
+    $email: String!
+    $resetToken: String!
+    $newPassword: String!
+  ) {
+    resetPassword(
+      email: $email
+      resetToken: $resetToken
+      newPassword: $newPassword
+    )
+  }
+`;
+
 export const BAN_USER = gql`
-  mutation BanUser($id: Int!) {
-    banUser(user_id: $id)
+  mutation BanUser($userId: Int!, $ban: Boolean!) {
+    banUser(user_id: $userId, ban: $ban)
   }
 `;

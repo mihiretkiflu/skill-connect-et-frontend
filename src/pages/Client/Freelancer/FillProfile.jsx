@@ -68,12 +68,13 @@ export default function CreateProfile() {
   const onSubmit = async (values) => {
     console.log({ values });
 
-    delete values.fullname;
-    delete values.firstname;
-    delete values.lastname;
+    if (!currentUser?.bio) {
+      delete values.fullname;
+      delete values.firstname;
+      delete values.lastname;
+    }
 
     try {
-      console.log(!!currentUser?.bio);
       if (currentUser?.bio) {
         const { data } = await editProfile({
           variables: { input: { ...values, id: currentUser.id } },
